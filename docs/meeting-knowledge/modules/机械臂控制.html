@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机械臂控制 · 项目管理仪表板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #1f2a3a;
+            padding: 24px;
+        }
+        .page {
+            max-width: 1360px;
+            margin: 0 auto;
+        }
+
+        /* ---------- 导航栏 ---------- */
+        .top-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 14px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8eaed;
+        }
+        .top-nav a {
+            text-decoration: none;
+            font-size: 14px;
+            color: #5f6b7a;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .top-nav a:hover {
+            background: #f0f5ff;
+            color: #3370ff;
+        }
+        .top-nav .nav-title {
+            font-weight: 600;
+            color: #1f2a3a;
+            padding: 6px 14px 6px 4px;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ---------- 卡片通用 ---------- */
+        .panel {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px 24px 24px;
+            margin-bottom: 20px;
+            border: 1px solid #e8eaed;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+        .panel-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1f2a3a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .panel-title .badge {
+            font-size: 12px;
+            font-weight: 400;
+            background: #f0f5ff;
+            color: #3370ff;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+        .panel-sub {
+            color: #8c9aa8;
+            font-size: 13px;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+        .tag {
+            display: inline-block;
+            font-size: 12px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .tag-high {
+            background: #fff1f0;
+            color: #e54545;
+        }
+        .tag-mid {
+            background: #fff7e6;
+            color: #d48806;
+        }
+        .tag-low {
+            background: #f0f5ff;
+            color: #3370ff;
+        }
+        .tag-done {
+            background: #e6fffb;
+            color: #13a10e;
+        }
+        .tag-risk {
+            background: #fff1f0;
+            color: #c41d1d;
+        }
+        .tag-new {
+            background: #e6fffb;
+            color: #0d7c5e;
+        }
+        .tag-updated {
+            background: #f0f5ff;
+            color: #3370ff;
+        }
+        .tag-neutral {
+            background: #f5f7fa;
+            color: #5f6b7a;
+        }
+        .src-missing {
+            color: #b0b8c4;
+            font-style: italic;
+            font-size: 13px;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #e8eaed;
+            margin: 18px 0;
+        }
+
+        /* ---------- 网格 ---------- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        @media (max-width: 900px) {
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---------- 目标卡片 ---------- */
+        .goal-card {
+            background: #f7f9fc;
+            border-radius: 10px;
+            padding: 18px 20px;
+            border-left: 4px solid #3370ff;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #1f2a3a;
+        }
+
+        /* ---------- 时间线 ---------- */
+        .timeline {
+            position: relative;
+            padding-left: 28px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            bottom: 4px;
+            width: 2px;
+            background: #d0d7de;
+        }
+        .tl-item {
+            position: relative;
+            padding-bottom: 18px;
+        }
+        .tl-item:last-child {
+            padding-bottom: 0;
+        }
+        .tl-dot {
+            position: absolute;
+            left: -24px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #3370ff;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #3370ff;
+        }
+        .tl-dot.gray {
+            background: #b0b8c4;
+            box-shadow: 0 0 0 2px #b0b8c4;
+        }
+        .tl-date {
+            font-size: 12px;
+            color: #8c9aa8;
+            margin-bottom: 2px;
+        }
+        .tl-text {
+            font-size: 14px;
+            color: #1f2a3a;
+            line-height: 1.5;
+        }
+        .tl-text .highlight {
+            color: #3370ff;
+            font-weight: 500;
+        }
+
+        /* ---------- 路线图 ---------- */
+        .roadmap {
+            display: flex;
+            gap: 0;
+            align-items: stretch;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e8eaed;
+        }
+        .rm-phase {
+            flex: 1;
+            padding: 16px 14px;
+            background: #fafbfc;
+            border-right: 1px solid #e8eaed;
+        }
+        .rm-phase:last-child {
+            border-right: none;
+        }
+        .rm-phase-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #5f6b7a;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #d0d7de;
+        }
+        .rm-phase.past .rm-phase-title {
+            color: #13a10e;
+            border-color: #13a10e;
+        }
+        .rm-phase.present .rm-phase-title {
+            color: #3370ff;
+            border-color: #3370ff;
+        }
+        .rm-phase.future .rm-phase-title {
+            color: #d48806;
+            border-color: #d48806;
+        }
+        .rm-item {
+            font-size: 13px;
+            padding: 4px 0 4px 12px;
+            position: relative;
+            line-height: 1.5;
+        }
+        .rm-item::before {
+            content: '·';
+            position: absolute;
+            left: 0;
+            color: #8c9aa8;
+        }
+        .rm-item.done {
+            color: #13a10e;
+        }
+        .rm-item.done::before {
+            content: '✓';
+            color: #13a10e;
+        }
+        .rm-item.warn {
+            color: #d48806;
+        }
+        .rm-item.warn::before {
+            content: '·';
+            color: #d48806;
+        }
+
+        /* ---------- 流程图 ---------- */
+        .flow-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 6px 14px;
+            padding: 12px 0;
+        }
+        .flow-node {
+            background: #f0f5ff;
+            border: 1px solid #c6d9ff;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2a3a;
+            text-align: center;
+            min-width: 70px;
+        }
+        .flow-node.highlight {
+            background: #e6fffb;
+            border-color: #95e0d0;
+        }
+        .flow-node.warn {
+            background: #fff7e6;
+            border-color: #ffd591;
+        }
+        .flow-node.feedback {
+            background: #fff1f0;
+            border-color: #ffb3b3;
+        }
+        .flow-arrow {
+            font-size: 20px;
+            color: #8c9aa8;
+            font-weight: 300;
+        }
+        .flow-label {
+            font-size: 11px;
+            color: #8c9aa8;
+            text-align: center;
+            margin-top: 2px;
+        }
+        .flow-row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ---------- 甘特图 ---------- */
+        .gantt {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .gantt th {
+            text-align: left;
+            font-weight: 500;
+            color: #5f6b7a;
+            padding: 6px 8px;
+            border-bottom: 1px solid #e8eaed;
+            font-size: 12px;
+        }
+        .gantt td {
+            padding: 8px 8px;
+            border-bottom: 1px solid #f0f2f5;
+            vertical-align: middle;
+        }
+        .gantt .bar-cell {
+            position: relative;
+            min-width: 120px;
+        }
+        .gantt .bar {
+            display: block;
+            height: 20px;
+            border-radius: 4px;
+            background: #d0d7de;
+            position: relative;
+            min-width: 4px;
+        }
+        .gantt .bar.high {
+            background: #3370ff;
+        }
+        .gantt .bar.mid {
+            background: #ffc53d;
+        }
+        .gantt .bar.low {
+            background: #b0b8c4;
+        }
+        .gantt .bar-label {
+            position: absolute;
+            left: 8px;
+            top: 0;
+            line-height: 20px;
+            font-size: 11px;
+            color: #fff;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .gantt .bar-label.dark {
+            color: #1f2a3a;
+        }
+        .g-date {
+            font-size: 11px;
+            color: #8c9aa8;
+        }
+
+        /* ---------- 基准对比 ---------- */
+        .bench-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 40px;
+        }
+        @media (max-width: 700px) {
+            .bench-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .bench-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .bench-label {
+            font-size: 13px;
+            color: #5f6b7a;
+            display: flex;
+            justify-content: space-between;
+        }
+        .bench-track {
+            height: 28px;
+            background: #f0f2f5;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+        }
+        .bench-fill {
+            height: 100%;
+            border-radius: 6px;
+            background: #3370ff;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            font-size: 12px;
+            color: #fff;
+            font-weight: 500;
+            min-width: 28px;
+        }
+        .bench-fill.old {
+            background: #b0b8c4;
+        }
+        .bench-fill.green {
+            background: #13a10e;
+        }
+        .bench-compare {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 4px 0;
+        }
+        .bench-compare .val {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .bench-compare .val.old {
+            color: #8c9aa8;
+        }
+        .bench-compare .val.new {
+            color: #13a10e;
+        }
+        .bench-compare .arrow {
+            color: #d0d7de;
+            font-size: 18px;
+        }
+
+        /* ---------- 雷达图 ---------- */
+        .radar-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .radar-legend {
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        .radar-legend .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .radar-legend .dot.blue {
+            background: #3370ff;
+        }
+        .radar-legend .litem {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .radar-note {
+            font-size: 12px;
+            color: #8c9aa8;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* ---------- 任务卡片 ---------- */
+        .task-card {
+            background: #f7f9fc;
+            border-radius: 10px;
+            padding: 16px 18px;
+            border: 1px solid #e8eaed;
+            transition: box-shadow 0.15s;
+        }
+        .task-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        .task-card .task-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .task-card .task-meta {
+            font-size: 12px;
+            color: #5f6b7a;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            margin-top: 6px;
+        }
+        .task-card .task-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ---------- 风险表 ---------- */
+        .risk-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .risk-table th {
+            text-align: left;
+            font-weight: 500;
+            color: #5f6b7a;
+            padding: 8px 10px;
+            border-bottom: 1px solid #e8eaed;
+            font-size: 12px;
+            background: #fafbfc;
+        }
+        .risk-table td {
+            padding: 10px 10px;
+            border-bottom: 1px solid #f0f2f5;
+            vertical-align: middle;
+        }
+        .risk-table .risk-icon {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .risk-table .risk-icon.high {
+            background: #e54545;
+        }
+        .risk-table .risk-icon.mid {
+            background: #d48806;
+        }
+
+        /* ---------- 最近变化 ---------- */
+        .change-list {
+            list-style: none;
+            padding: 0;
+        }
+        .change-list li {
+            padding: 8px 0 8px 24px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.5;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        .change-list li:last-child {
+            border-bottom: none;
+        }
+        .change-list li .cl-icon {
+            position: absolute;
+            left: 0;
+            top: 8px;
+            font-size: 14px;
+        }
+
+        /* ---------- 其他 ---------- */
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-12 {
+            margin-top: 12px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: #8c9aa8;
+            font-size: 13px;
+        }
+        .gap-4 {
+            gap: 4px;
+        }
+        .inline-flex {
+            display: inline-flex;
+            align-items: center;
+        }
+        .tag-sm {
+            font-size: 11px;
+            padding: 1px 8px;
+            border-radius: 10px;
+        }
+
+        /* 甘特图日期模拟 */
+        .g-day {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            font-size: 10px;
+            color: #8c9aa8;
+            text-align: center;
+        }
+        .g-week {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+
+        /* 流程图的SVG补充 */
+        .flow-svg-wrap {
+            display: flex;
+            justify-content: center;
+            padding: 8px 0;
+        }
+
+        /* 响应式微调 */
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            .panel {
+                padding: 16px;
+            }
+            .top-nav {
+                padding: 10px 14px;
+            }
+            .top-nav a {
+                font-size: 12px;
+                padding: 4px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <!-- ========== 导航栏 ========== -->
+        <nav class="top-nav" id="nav-top">
+            <span class="nav-title">🧩 机械臂控制 · 项目管理</span>
+            <a href="#module-goal">目标</a>
+            <a href="#timeline">时间线</a>
+            <a href="#roadmap">路线图</a>
+            <a href="#flowchart">流程图</a>
+            <a href="#gantt">甘特图</a>
+            <a href="#benchmark">基准对比</a>
+            <a href="#radar">雷达图</a>
+            <a href="#tasks">任务卡片</a>
+            <a href="#risks">风险表</a>
+            <a href="#changes">变化</a>
+            <a href="#confirmed">已确认</a>
+        </nav>
+
+        <!-- ========== 模块目标 ========== -->
+        <div class="panel" id="module-goal">
+            <div class="panel-title">🎯 模块目标 <span class="badge">核心</span></div>
+            <div class="goal-card">
+                实现真实机械臂（<strong>MG400</strong>）的运动控制，包括 <strong>XYZR</strong> 移动、夹具夹持、避障反馈，并与大模型调度层对接，完成测试点定位后的物理操作。
+            </div>
+            <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: #5f6b7a;">
+                <span>📅 相关会议：2026-05-08 · 05-12 · 05-15（上/下午）· 05-22</span>
+                <span>🔧 当前精度：<strong style="color:#13a10e;">0.1</strong>（相对基准点）</span>
+                <span>📡 通讯：进程内（→ 以太网计划中）</span>
+            </div>
+        </div>
+
+        <!-- ========== 时间线 ========== -->
+        <div class="panel" id="timeline">
+            <div class="panel-title">📅 时间线 <span class="badge">Timeline</span></div>
+            <div class="timeline">
+                <div class="tl-item">
+                    <div class="tl-dot"></div>
+                    <div class="tl-date">2026-05-08 上午</div>
+                    <div class="tl-text">项目进展与分工会议</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-dot"></div>
+                    <div class="tl-date">2026-05-12 下午</div>
+                    <div class="tl-text">机械臂工作讨论会议</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-dot"></div>
+                    <div class="tl-date">2026-05-15 上午</div>
+                    <div class="tl-text">机械臂仿真与测试流程对接会议</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-dot" style="background:#13a10e;box-shadow:0 0 0 2px #13a10e;"></div>
+                    <div class="tl-date">2026-05-15 下午</div>
+                    <div class="tl-text">模型界面与精度讨论 — <span class="highlight">精度从 4mm 提升至 0.1</span></div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-dot"></div>
+                    <div class="tl-date">2026-05-22 上午</div>
+                    <div class="tl-text">项目流程测试点讨论会议</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-dot gray"></div>
+                    <div class="tl-date">2026-05-22 17:30 <span class="tag tag-high tag-sm">截止</span></div>
+                    <div class="tl-text">调通整个流程（输入 → 大模型 → 机械臂）<span style="color:#5f6b7a;font-size:13px;"> · 负责人：说话人1、5、6</span></div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-dot gray"></div>
+                    <div class="tl-date">2026-05-22 <span class="tag tag-high tag-sm">截止</span></div>
+                    <div class="tl-text">记录运行时间组成，比对仿真与真机一致性</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 路线图 ========== -->
+        <div class="panel" id="roadmap">
+            <div class="panel-title">🗺️ 路线图 <span class="badge">Roadmap</span></div>
+            <div class="roadmap">
+                <div class="rm-phase past">
+                    <div class="rm-phase-title">✅ 过去</div>
+                    <div class="rm-item done">TCP命令（XYZR）调通</div>
+                    <div class="rm-item done">精度 4mm → 0.1</div>
+                    <div class="rm-item done">夹具（橡胶套筒）设计完成</div>
+                    <div class="rm-item done">接口返回 -1 已解决</div>
+                </div>
+                <div class="rm-phase present">
+                    <div class="rm-phase-title">🔵 现在</div>
+                    <div class="rm-item">避障功能已实现（需人工确认）</div>
+                    <div class="rm-item">夹具 3D 打印中</div>
+                    <div class="rm-item">通讯方式：进程内</div>
+                    <div class="rm-item">避障反馈接口已找到（9878端口）</div>
+                </div>
+                <div class="rm-phase future">
+                    <div class="rm-phase-title">🟡 未来</div>
+                    <div class="rm-item warn">通讯改为以太网（TCP/HTTP）</div>
+                    <div class="rm-item warn">避障反馈接口明确</div>
+                    <div class="rm-item warn">全流程调通（输入→大模型→机械臂）</div>
+                    <div class="rm-item warn">运行时间组成比对</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 流程图 ========== -->
+        <div class="panel" id="flowchart">
+            <div class="panel-title">🔁 流程图 <span class="badge">Flowchart</span></div>
+            <div class="flow-container">
+                <div class="flow-row">
+                    <div class="flow-node">📥 输入</div>
+                    <div class="flow-label">测试点定位</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-row">
+                    <div class="flow-node highlight">🧠 大模型调度层</div>
+                    <div class="flow-label">任务解析</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-row">
+                    <div class="flow-node">🤖 机械臂 MG400</div>
+                    <div class="flow-label">XYZR 移动</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-row">
+                    <div class="flow-node">✋ 夹具夹持</div>
+                    <div class="flow-label">橡胶套筒</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-row">
+                    <div class="flow-node feedback">⚠️ 避障反馈</div>
+                    <div class="flow-label">停止 + 返回坐标</div>
+                </div>
+                <div class="flow-arrow" style="color:#e54545;">↺</div>
+                <div class="flow-row">
+                    <div class="flow-node warn">👤 人工确认</div>
+                    <div class="flow-label">重新发送目标</div>
+                </div>
+            </div>
+            <div style="text-align:center;font-size:12px;color:#8c9aa8;margin-top:6px;">
+                ⚡ 避障后需人工介入，无自动绕行 · 通讯方式当前为进程内
+            </div>
+        </div>
+
+        <!-- ========== 甘特图 ========== -->
+        <div class="panel" id="gantt">
+            <div class="panel-title">📊 甘特图 <span class="badge">Gantt</span></div>
+            <table class="gantt">
+                <thead>
+                    <tr>
+                        <th style="width:30%;">任务</th>
+                        <th style="width:14%;">负责人</th>
+                        <th style="width:12%;">优先级</th>
+                        <th style="width:44%;">时间线</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>调通整个流程（输入→大模型→机械臂）</td>
+                        <td>说话人1、5、6</td>
+                        <td><span class="tag tag-high">高</span></td>
+                        <td class="bar-cell">
+                            <span class="bar high" style="width:72%;margin-left:8%;">
+                                <span class="bar-label">05-08 ~ 05-22</span>
+                            </span>
+                            <span class="g-date">截止 05-22 17:30</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>记录运行时间组成，比对仿真与真机一致性</td>
+                        <td>说话人1等</td>
+                        <td><span class="tag tag-high">高</span></td>
+                        <td class="bar-cell">
+                            <span class="bar high" style="width:50%;margin-left:20%;">
+                                <span class="bar-label">05-12 ~ 05-22</span>
+                            </span>
+                            <span class="g-date">截止 05-22</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>避障反馈接口明确（确认输出内容）</td>
+                        <td>说话人3</td>
+                        <td><span class="tag tag-mid">中</span></td>
+                        <td class="bar-cell">
+                            <span class="bar mid" style="width:40%;margin-left:30%;">
+                                <span class="bar-label dark" style="color:#5f6b7a;">待明确</span>
+                            </span>
+                            <span class="g-date">原文未明确</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>将机械臂通讯改为以太网方式</td>
+                        <td>说话人7/6</td>
+                        <td><span class="tag tag-low">低</span></td>
+                        <td class="bar-cell">
+                            <span class="bar low" style="width:20%;margin-left:40%;">
+                                <span class="bar-label dark" style="color:#5f6b7a;">计划中</span>
+                            </span>
+                            <span class="g-date">原文未明确</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="font-size:12px;color:#8c9aa8;margin-top:8px;text-align:right;">
+                📌 时间轴基于会议日期与截止日期推算 · 部分截止时间原文未明确
+            </div>
+        </div>
+
+        <!-- ========== 基准对比 ========== -->
+        <div class="panel" id="benchmark">
+            <div class="panel-title">📈 基准对比 <span class="badge">Benchmark</span></div>
+            <div class="bench-grid">
+                <div class="bench-item">
+                    <div class="bench-label">
+                        <span>🎯 运动精度（相对基准点）</span>
+                        <span style="font-weight:600;">提升 97.5%</span>
+                    </div>
+                    <div style="display:flex;gap:20px;align-items:center;padding:4px 0 8px;">
+                        <div style="flex:1;">
+                            <div style="font-size:12px;color:#8c9aa8;margin-bottom:4px;">之前</div>
+                            <div class="bench-track">
+                                <div class="bench-fill old" style="width:20%;">4mm</div>
+                            </div>
+                        </div>
+                        <div style="font-size:16px;color:#d0d7de;">→</div>
+                        <div style="flex:1;">
+                            <div style="font-size:12px;color:#8c9aa8;margin-bottom:4px;">现在</div>
+                            <div class="bench-track">
+                                <div class="bench-fill green" style="width:98%;">0.1mm</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="font-size:12px;color:#8c9aa8;">✅ 已确认 · 5月15日下午验证</div>
+                </div>
+                <div class="bench-item">
+                    <div class="bench-label">
+                        <span>🛡️ 避障功能</span>
+                        <span class="src-missing">source not explicit</span>
+                    </div>
+                    <div style="display:flex;gap:20px;align-items:center;padding:4px 0 8px;">
+                        <div style="flex:1;">
+                            <div style="font-size:12px;color:#8c9aa8;margin-bottom:4px;">之前</div>
+                            <div class="bench-track">
+                                <div class="bench-fill old" style="width:10%;">—</div>
+                            </div>
+                        </div>
+                        <div style="font-size:16px;color:#d0d7de;">→</div>
+                        <div style="flex:1;">
+                            <div style="font-size:12px;color:#8c9aa8;margin-bottom:4px;">现在</div>
+                            <div class="bench-track">
+                                <div class="bench-fill" style="width:60%;background:#ffc53d;">停止+反馈</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="font-size:12px;color:#8c9aa8;">⚠️ 需人工确认，无自动绕行</div>
+                </div>
+                <div class="bench-item">
+                    <div class="bench-label">
+                        <span>📡 通讯方式</span>
+                        <span class="src-missing">source not explicit</span>
+                    </div>
+                    <div style="display:flex;gap:20px;align-items:center;padding:4px 0 8px;">
+                        <div style="flex:1;">
+                            <div style="font-size:12px;color:#8c9aa8;margin-bottom:4px;">之前</div>
+                            <div class="bench-track">
+                                <div class="bench-fill old" style="width:15%;">—</div>
+                            </div>
+                        </div>
+                        <div style="font-size:16px;color:#d0d7de;">→</div>
+                        <div style="flex:1;">
+                            <div style="font-size:12px;color:#8c9aa8;margin-bottom:4px;">现在</div>
+                            <div class="bench-track">
+                                <div class="bench-fill" style="width:30%;background:#b0b8c4;">进程内</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="font-size:12px;color:#8c9aa8;">🔜 计划改为以太网（TCP/HTTP）</div>
+                </div>
+                <div class="bench-item">
+                    <div class="bench-label">
+                        <span>🔧 夹具完成度</span>
+                        <span class="src-missing">source not explicit</span>
+                    </div>
+                    <div style="display:flex;gap:20px;align-items:center;padding:4px 0 8px;">
+                        <div style="flex:1;">
+                            <div style="font-size:12px;color:#8c9aa8;margin-bottom:4px;">之前</div>
+                            <div class="bench-track">
+                                <div class="bench-fill old" style="width:10%;">—</div>
+                            </div>
+                        </div>
+                        <div style="font-size:16px;color:#d0d7de;">→</div>
+                        <div style="flex:1;">
+                            <div style="font-size:12px;color:#8c9aa8;margin-bottom:4px;">现在</div>
+                            <div class="bench-track">
+                                <div class="bench-fill green" style="width:75%;">设计完成</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="font-size:12px;color:#8c9aa8;">🖨️ 3D 打印中 · 橡胶套筒已制作完成</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 雷达图 ========== -->
+        <div class="panel" id="radar">
+            <div class="panel-title">🕸️ 能力雷达图 <span class="badge">Radar</span></div>
+            <div class="radar-wrap">
+                <svg width="320" height="320" viewBox="0 0 320 320" style="flex-shrink:0;">
+                    <defs>
+                        <polygon id="hex" points="160,20 277,87 277,233 160,300 43,233 43,87" />
+                    </defs>
+                    <!-- 网格 -->
+                    <g stroke="#e0e4ea" stroke-width="1" fill="none">
+                        <polygon points="160,110 211,142 211,208 160,240 109,208 109,142" />
+                        <polygon points="160,75 230,118 230,202 160,245 90,202 90,118" />
+                        <polygon points="160,45 247,95 247,225 160,275 73,225 73,95" />
+                        <polygon points="160,20 277,87 277,233 160,300 43,233 43,87" />
+                    </g>
+                    <!-- 轴线 -->
+                    <g stroke="#d0d7de" stroke-width="1">
+                        <line x1="160" y1="20" x2="160" y2="300" />
+                        <line x1="43" y1="87" x2="277" y2="233" />
+                        <line x1="277" y1="87" x2="43" y2="233" />
+                    </g>
+                    <!-- 数据多边形 (评分1-5，映射到半径) -->
+                    <!-- 半径公式: r = 20 + (score/5)*130，中心(160,160) -->
+                    <!-- 维度: 精度(上),避障(右上),通讯(右下),流程(下),夹具(左下),对接(左上) -->
+                    <!-- 评分: 精度5,避障3,通讯2,流程3,夹具4,对接3 -->
+                    <!-- 角度: 0°(上),60°,120°,180°,240°,300° -->
+                    <polygon points="160,30 231,117 203,216 160,270 117,216 89,117" fill="rgba(51,112,255,0.18)" stroke="#3370ff" stroke-width="2.5" stroke-linejoin="round" />
+                    <!-- 数据点 -->
+                    <g fill="#3370ff">
+                        <circle cx="160" cy="30" r="5" />
+                        <circle cx="231" cy="117" r="5" />
+                        <circle cx="203" cy="216" r="5" />
+                        <circle cx="160" cy="270" r="5" />
+                        <circle cx="117" cy="216" r="5" />
+                        <circle cx="89" cy="117" r="5" />
+                    </g>
+                    <!-- 标签 (调整位置避免遮挡) -->
+                    <g font-size="12" fill="#1f2a3a" font-weight="500" text-anchor="middle">
+                        <text x="160" y="16">运动精度 5</text>
+                        <text x="288" y="95">避障功能 3</text>
+                        <text x="270" y="250">通讯稳定 2</text>
+                        <text x="160" y="314">流程完整 3</text>
+                        <text x="50" y="250">夹具完成 4</text>
+                        <text x="32" y="95">大模型对接 3</text>
+                    </g>
+                </svg>
+                <div class="radar-legend">
+                    <div style="font-weight:600;margin-bottom:6px;">📌 维度评分（1-5）</div>
+                    <div class="litem"><span class="dot blue"></span> 运动精度：5 — 0.1mm，极高</div>
+                    <div class="litem"><span class="dot blue"></span> 避障功能：3 — 已实现，需人工</div>
+                    <div class="litem"><span class="dot blue"></span> 通讯稳定：2 — 进程内，待改进</div>
+                    <div class="litem"><span class="dot blue"></span> 流程完整：3 — 部分调通</div>
+                    <div class="litem"><span class="dot blue"></span> 夹具完成：4 — 已设计，打印中</div>
+                    <div class="litem"><span class="dot blue"></span> 大模型对接：3 — 接口已通</div>
+                    <div style="margin-top:8px;font-size:11px;color:#8c9aa8;">评分基于源文件状态描述 · 非精确数值</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 任务负责人卡片 ========== -->
+        <div class="panel" id="tasks">
+            <div class="panel-title">👥 任务负责人卡片 <span class="badge">Task Cards</span></div>
+            <div class="grid-2">
+                <div class="task-card">
+                    <div class="task-title">🔗 调通整个流程（输入→大模型→机械臂）</div>
+                    <div style="font-size:13px;color:#1f2a3a;">确保从输入到机械臂操作的全链路打通</div>
+                    <div class="task-meta">
+                        <span>👤 负责人：说话人1、5、6</span>
+                        <span>📅 截止：2026-05-22 17:30</span>
+                        <span><span class="tag tag-high">高</span></span>
+                    </div>
+                </div>
+                <div class="task-card">
+                    <div class="task-title">⏱️ 记录运行时间组成，比对仿真与真机一致性</div>
+                    <div style="font-size:13px;color:#1f2a3a;">收集时间数据，验证仿真与真实机械臂的一致性</div>
+                    <div class="task-meta">
+                        <span>👤 负责人：说话人1等</span>
+                        <span>📅 截止：2026-05-22</span>
+                        <span><span class="tag tag-high">高</span></span>
+                    </div>
+                </div>
+                <div class="task-card">
+                    <div class="task-title">📋 避障反馈接口明确（确认输出内容）</div>
+                    <div style="font-size:13px;color:#1f2a3a;">明确避障反馈的数据格式与输出字段</div>
+                    <div class="task-meta">
+                        <span>👤 负责人：说话人3</span>
+                        <span>📅 截止：<span class="src-missing">原文未明确</span></span>
+                        <span><span class="tag tag-mid">中</span></span>
+                    </div>
+                </div>
+                <div class="task-card">
+                    <div class="task-title">🌐 将机械臂通讯改为以太网方式</div>
+                    <div style="font-size:13px;color:#1f2a3a;">从进程内通讯迁移至以太网（TCP/HTTP）</div>
+                    <div class="task-meta">
+                        <span>👤 负责人：说话人7/6</span>
+                        <span>📅 截止：<span class="src-missing">原文未明确</span></span>
+                        <span><span class="tag tag-low">低</span></span>
+                        <span style="color:#8c9aa8;">先可用进程内</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 风险状态表 ========== -->
+        <div class="panel" id="risks">
+            <div class="panel-title">⚠️ 风险状态表 <span class="badge">Risk Status</span></div>
+            <table class="risk-table">
+                <thead>
+                    <tr>
+                        <th style="width:6%;">#</th>
+                        <th style="width:54%;">风险描述</th>
+                        <th style="width:14%;">等级</th>
+                        <th style="width:26%;">状态 / 备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><span class="risk-icon high"></span> 避障后需人工干预，自动化流程中断</td>
+                        <td><span class="tag tag-high">高</span></td>
+                        <td>确认 · 无自动绕行</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><span class="risk-icon high"></span> 通讯方式（进程内）不可靠，易丢失连接</td>
+                        <td><span class="tag tag-high">高</span></td>
+                        <td>确认 · 计划改以太网</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><span class="risk-icon mid"></span> 大模型输出缺少Z轴旋转角，暂设0可能影响精度</td>
+                        <td><span class="tag tag-mid">中</span></td>
+                        <td>确认 · 需补充旋转角</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="font-size:12px;color:#8c9aa8;margin-top:8px;">✅ 所有风险均来自源文件确认</div>
+        </div>
+
+        <!-- ========== 已确认事项 + 最近变化（双栏） ========== -->
+        <div class="grid-2">
+            <!-- 已确认事项 -->
+            <div class="panel" id="confirmed">
+                <div class="panel-title">✅ 已确认事项 <span class="badge">Confirmed</span></div>
+                <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                    <thead>
+                        <tr style="border-bottom:1px solid #e8eaed;">
+                            <th style="text-align:left;padding:6px 8px;font-weight:500;color:#5f6b7a;">事项</th>
+                            <th style="text-align:left;padding:6px 8px;font-weight:500;color:#5f6b7a;">确认结果</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid #f0f2f5;"><td style="padding:8px;">真实机械臂接口（TCP命令）可正常控制XYZR</td><td style="padding:8px;"><span class="tag tag-done">已调通</span></td></tr>
+                        <tr style="border-bottom:1px solid #f0f2f5;"><td style="padding:8px;">运动精度达到0.1（相对基准点）</td><td style="padding:8px;"><span class="tag tag-done">已验证</span></td></tr>
+                        <tr style="border-bottom:1px solid #f0f2f5;"><td style="padding:8px;">避障行为：停止并反馈坐标，不自动绕行</td><td style="padding:8px;"><span class="tag tag-done">已确认</span></td></tr>
+                        <tr style="border-bottom:1px solid #f0f2f5;"><td style="padding:8px;">夹具（橡胶套筒）已完成设计，可套接</td><td style="padding:8px;"><span class="tag tag-done">已确认</span></td></tr>
+                        <tr><td style="padding:8px;">接口返回-1问题已解决（之前因无真实数据）</td><td style="padding:8px;"><span class="tag tag-done">已解决</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 最近变化 -->
+            <div class="panel" id="changes">
+                <div class="panel-title">📌 最近变化 <span class="badge">Changes</span></div>
+                <ul class="change-list">
+                    <li>
+                        <span class="cl-icon">🔄</span>
+                        <span class="tag tag-updated tag-sm">变化</span>
+                        <span style="margin-left:6px;">运动精度从 <strong>4mm</strong> 提升至 <strong>0.1</strong>（5月15日下午确认）</span>
+                    </li>
+                    <li>
+                        <span class="cl-icon">✨</span>
+                        <span class="tag tag-new tag-sm">新增</span>
+                        <span style="margin-left:6px;">避障反馈接口已找到（<strong>9878端口</strong>），但通讯方式需改进</span>
+                    </li>
+                    <li>
+                        <span class="cl-icon">✨</span>
+                        <span class="tag tag-new tag-sm">新增</span>
+                        <span style="margin-left:6px;">夹具橡胶套筒已制作完成</span>
+                    </li>
+                </ul>
+                <div style="font-size:12px;color:#8c9aa8;margin-top:10px;">📋 所有变化均来自源文件记录</div>
+            </div>
+        </div>
+
+        <!-- ========== 页脚 ========== -->
+        <div style="text-align:center;font-size:12px;color:#b0b8c4;padding:20px 0 8px;border-top:1px solid #e8eaed;margin-top:12px;">
+            机械臂控制 · 项目管理仪表板 &nbsp;|&nbsp; 数据源：机械臂控制.md &nbsp;|&nbsp; 飞书风格视觉语言
+        </div>
+
+    </div>
+    <!-- 简单的滚动平滑 -->
+    <script>
+        document.querySelectorAll('.top-nav a').forEach(function(a) {
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                var target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
