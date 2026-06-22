@@ -1,0 +1,73 @@
+name: Topic Ontology Weekly Evolution
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: topic-ontology-weekly-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  evolve-ontology:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check source
+        run: npm run check
+
+      - name: Bootstrap ontology from latest summaries
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL || 'https://api.deepseek.com' }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'deepseek-v4-flash' }}
+        run: npm run bootstrap:ontology
+
+      - name: Promote topics and write weekly diff
+        run: npm run evolve:ontology
+
+      - name: Expand external knowledge for emerging topics
+        env:
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: npm run expand:topics
+
+      - name: Update meeting knowledge from ontology
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL || 'https://api.deepseek.com' }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'deepseek-v4-flash' }}
+        run: npm start -- --update-meeting-knowledge-only --disable-external-knowledge-expand
+
+      - name: Publish docs site
+        run: npm start -- --publish-docs-only
+
+      - name: Commit ontology evolution outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f topic-ontology meeting-knowledge docs
+          if git diff --cached --quiet; then
+            echo "No ontology evolution changes to commit."
+            exit 0
+          fi
+          git commit -m "Weekly topic ontology evolution and external knowledge"
+          git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

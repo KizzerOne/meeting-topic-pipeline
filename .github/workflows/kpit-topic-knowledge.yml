@@ -86,6 +86,7 @@ jobs:
           fi
 
           npm start -- --update-meeting-knowledge-only
+          npm run expand:topics || echo "External knowledge expansion skipped"
           npm start -- --publish-docs-only
 
       - name: Commit topic knowledge outputs

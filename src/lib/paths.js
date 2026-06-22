@@ -1,57 +1,65 @@
 import path from 'node:path';
+import { projectRoot } from '../context.js';
+import { cleanPdfText } from './text.js';
 
 export function toBrowserPath(filePath) {
-  return String(filePath).split(path.sep).join('/');
+  return filePath.split(path.sep).join('/');
 }
 
 export function replaceExtension(filePath, ext) {
-  return filePath.replace(/\.[^.]+$/u, ext.startsWith('.') ? ext : `.${ext}`);
+  return path.join(path.dirname(filePath), `${path.basename(filePath, path.extname(filePath))}${ext}`);
 }
 
-export function outputFolderForInput(inputPath, inputDir, projectRoot) {
-  const relative = path.relative(path.resolve(projectRoot, inputDir), inputPath);
-  const relativeWithoutExt = relative.replace(/\.[^.]+$/u, '');
-  const safeParts = relativeWithoutExt
-    .split(/[\\/]/u)
-    .map((part) => part.replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, '_').trim())
-    .filter(Boolean);
-  return path.join('pdf-chat-summaries', ...safeParts);
+export function outputFolderForInput(inputPath, inputDir) {
+  const inputRoot = path.resolve(projectRoot, inputDir);
+  const resolvedInput = path.resolve(inputPath);
+  const relativeInput = path.relative(inputRoot, resolvedInput);
+  const isInsideInputRoot = relativeInput && !relativeInput.startsWith('..') && !path.isAbsolute(relativeInput);
+  const relativeWithoutExt = isInsideInputRoot
+    ? path.join(path.dirname(relativeInput), path.basename(relativeInput, path.extname(relativeInput)))
+    : path.basename(resolvedInput, path.extname(resolvedInput));
+  const safeSegments = relativeWithoutExt
+    .split(path.sep)
+    .filter((segment) => segment && segment !== '.')
+    .map((segment) => sanitizeFileBaseName(segment) || 'input');
+  return safeSegments.length > 0 ? path.join(...safeSegments) : 'input';
 }
 
 export function sanitizeFileBaseName(value) {
-  return String(value || '')
+  return cleanPdfText(String(value || ''))
     .replace(/[\\/:*?"<>|]/g, '_')
     .replace(/\s+/g, '_')
-    .replace(/_+/g, '_')
-    .replace(/^\.+/g, '')
-    .trim()
-    .slice(0, 120) || 'summary';
+    .replace(/^\.+|\.+$/g, '')
+    .slice(0, 80)
+    .trim();
 }
 
 export function sanitizeSkillName(value) {
   return String(value || '')
     .toLowerCase()
     .replace(/[^a-z0-9-]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 64);
 }
 
 export function uniqueFileBaseName(suggestedName, originalPath, usedBaseNames) {
-  const base = sanitizeFileBaseName(suggestedName || path.basename(originalPath, path.extname(originalPath)));
-  let candidate = base;
+  const fallback = path.basename(originalPath, path.extname(originalPath));
+  const cleaned = sanitizeFileBaseName(suggestedName) || sanitizeFileBaseName(fallback) || 'summary';
+  let candidate = cleaned;
   let index = 2;
-  while (usedBaseNames.has(candidate)) {
-    candidate = `${base}_${index}`;
+  while (usedBaseNames.has(candidate.toLowerCase())) {
+    candidate = `${cleaned}-${index}`;
     index += 1;
   }
-  usedBaseNames.add(candidate);
+  usedBaseNames.add(candidate.toLowerCase());
   return candidate;
 }
 
 export function escapeHtml(value) {
-  return String(value || '')
+  return String(value)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }

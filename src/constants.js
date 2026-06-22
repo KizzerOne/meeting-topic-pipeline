@@ -30,7 +30,7 @@ export const supportedExtensions = new Set([
 
 export const clawhubMarkdownMaxBytes = 9.5 * 1024 * 1024;
 
-/** @deprecated Use topic-ontology.json; kept for meeting-knowledge until migration completes. */
+/** @deprecated Fallback when ontology.json is missing; prefer topic-ontology/ontology.json. */
 export const kpitMeetingTopics = [
   { name: '机械臂控制', scope: '真实机械臂接口、坐标格式、夹具、误差、移动策略' },
   { name: '仿真机械臂', scope: '仿真环境、不可达区域、路径规划、开环控制' },

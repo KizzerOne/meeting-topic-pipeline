@@ -1,7 +1,7 @@
 # Topic Ontology Bootstrap Report
 
-- Generated: 2026-06-22T07:41:28.320Z
-- Source: meeting-knowledge-bootstrap
+- Generated: 2026-06-22T08:17:34.569Z
+- Source: meeting-knowledge-bootstrap+llm
 - KPIT summaries: 10
 - Meeting modules: 7
 - Promote threshold: 0.9

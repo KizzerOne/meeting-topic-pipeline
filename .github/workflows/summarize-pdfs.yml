@@ -169,6 +169,7 @@ jobs:
               if [ "${#render_inputs[@]}" -gt 0 ]; then
                 npm start -- --render-markdown-to-html-only --input "${render_inputs[@]}"
                 npm start -- --update-meeting-knowledge-only
+                npm run expand:topics || echo "External knowledge expansion skipped"
                 npm start -- --publish-docs-only
               fi
             else
@@ -186,6 +187,7 @@ jobs:
             done < changed-inputs.txt
 
             npm start -- --update-meeting-knowledge-only
+            npm run expand:topics || echo "External knowledge expansion skipped"
             npm start -- --publish-docs-only
           fi
 
