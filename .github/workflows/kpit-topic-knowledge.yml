@@ -1,0 +1,105 @@
+name: Update KPIT Topic Knowledge
+
+on:
+  push:
+    paths:
+      - "pdf-chat-summaries/KPIT会议/**/*.md"
+      - ".github/workflows/kpit-topic-knowledge.yml"
+      - "src/**"
+      - ".claude/skills/kpit-topic-knowledge/**"
+      - ".claude/skills/kpit-demo-pages/**"
+      - ".claude/skills/meeting-overall-summary/**"
+      - ".claude/skills/meeting-module-router/**"
+      - ".claude/skills/meeting-module-summary/**"
+      - "package*.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kpit-topic-knowledge-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update-kpit-topics:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check source
+        run: npm run check
+
+      - name: Sync latest branch state
+        if: github.event_name == 'push'
+        run: git pull --ff-only origin "${GITHUB_REF_NAME}" || true
+
+      - name: Collect changed KPIT meeting Markdown files
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            find "pdf-chat-summaries/KPIT会议" -type f -name "*.md" | sort > changed-kpit-meetings.txt || true
+          elif git cat-file -e "${{ github.event.before }}" 2>/dev/null; then
+            git diff --name-only --diff-filter=AM "${{ github.event.before }}" "${{ github.sha }}" \
+              | grep -E '^pdf-chat-summaries/KPIT会议/.+\.md$' \
+              | sort > changed-kpit-meetings.txt || true
+          else
+            git diff-tree --no-commit-id --name-only -r "${{ github.sha }}" \
+              | grep -E '^pdf-chat-summaries/KPIT会议/.+\.md$' \
+              | sort > changed-kpit-meetings.txt || true
+          fi
+          touch changed-kpit-meetings.txt
+          echo "Changed KPIT meeting Markdown files:"
+          cat changed-kpit-meetings.txt
+
+      - name: Update topic knowledge
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL || 'https://api.deepseek.com' }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'deepseek-v4-flash' }}
+          CLAWHUB_HTML_URL: ${{ vars.CLAWHUB_HTML_URL || '' }}
+        shell: bash
+        run: |
+          render_inputs=()
+          while IFS= read -r markdown_file; do
+            if [ -f "$markdown_file" ]; then
+              render_inputs+=("$markdown_file")
+            fi
+          done < changed-kpit-meetings.txt
+
+          if [ "${#render_inputs[@]}" -gt 0 ]; then
+            npm start -- --render-markdown-to-html-only --input "${render_inputs[@]}"
+          fi
+
+          npm start -- --update-meeting-knowledge-only
+          npm start -- --publish-docs-only
+
+      - name: Commit topic knowledge outputs
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f pdf-chat-summaries/KPIT会议
+          git add -f meeting-knowledge
+          git add -f docs
+          if git diff --cached --quiet; then
+            echo "No KPIT topic knowledge changes to commit."
+            exit 0
+          fi
+          git commit -m "Update KPIT topic knowledge"
+          git pull --rebase -X theirs origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

@@ -1,0 +1,20 @@
+{
+  "name": "pdf-chat-summary-actions",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Generate Chinese summaries from PDF chat logs and publish results with GitHub Actions.",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "check": "node --check ./src/index.js && node --check ./src/tavily-domains.js && node --check ./src/tavily-search.js && node --check ./src/constants.js && node --check ./src/lib/process.js",
+    "clean:artifacts": "node ./scripts/clean-artifacts.js",
+    "bootstrap:ontology": "node ./scripts/bootstrap-topic-ontology.js",
+    "test:smoke": "npm run check && npm run bootstrap:ontology"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.7",
+    "openai": "^4.77.0",
+    "pdf-parse": "^1.1.1"
+  }
+}

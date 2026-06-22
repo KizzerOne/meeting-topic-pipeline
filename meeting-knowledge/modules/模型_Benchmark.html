@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型 Benchmark · 项目仪表板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            color: #1f2a44;
+            padding: 24px 32px 64px;
+            line-height: 1.5;
+        }
+        a {
+            text-decoration: none;
+            color: #2b6ff2;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* 顶部标题 */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            color: #0b1e3a;
+        }
+        .page-header .meta-badge {
+            background: #e8f0fe;
+            color: #2b6ff2;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid #d0e1fd;
+        }
+
+        /* 导航标签 */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+            background: #ffffff;
+            padding: 12px 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            margin-bottom: 32px;
+            border: 1px solid #eef0f4;
+        }
+        .nav-tabs a {
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #4a5a7a;
+            background: #f5f7fa;
+            transition: all 0.15s;
+            white-space: nowrap;
+            border: 1px solid transparent;
+        }
+        .nav-tabs a:hover {
+            background: #e8f0fe;
+            color: #2b6ff2;
+            text-decoration: none;
+            border-color: #d0e1fd;
+        }
+        .nav-tabs .nav-icon {
+            margin-right: 4px;
+        }
+
+        /* 模块卡片 */
+        .module {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            padding: 24px 28px 28px;
+            margin-bottom: 28px;
+            border: 1px solid #eef0f4;
+            transition: box-shadow 0.2s;
+        }
+        .module:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+        }
+        .module-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0b1e3a;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .module-title .badge {
+            font-size: 12px;
+            font-weight: 400;
+            background: #f0f2f5;
+            color: #5f6b8a;
+            padding: 2px 12px;
+            border-radius: 30px;
+            margin-left: 6px;
+        }
+        .module-sub {
+            font-size: 13px;
+            color: #6b7a9a;
+            margin-bottom: 18px;
+            border-left: 3px solid #d0e1fd;
+            padding-left: 14px;
+        }
+        .module-sub .source-mark {
+            background: #fef7e0;
+            color: #b8860b;
+            padding: 1px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            display: inline-block;
+            margin-left: 6px;
+        }
+
+        /* 网格工具 */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 900px) {
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 16px;
+            }
+            .module {
+                padding: 18px;
+            }
+        }
+        @media (max-width: 1200px) and (min-width: 901px) {
+            .grid-4 {
+                grid-template-columns: 1fr 1fr;
+            }
+            .grid-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* 表格风格 */
+        .mini-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .mini-table th {
+            text-align: left;
+            font-weight: 500;
+            color: #5f6b8a;
+            padding: 8px 8px 6px 0;
+            border-bottom: 1px solid #eef0f4;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .mini-table td {
+            padding: 10px 8px 10px 0;
+            border-bottom: 1px solid #f2f4f8;
+            vertical-align: middle;
+        }
+        .mini-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 标签 */
+        .tag {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+        .tag-blue {
+            background: #e8f0fe;
+            color: #2b6ff2;
+        }
+        .tag-green {
+            background: #e6f7e6;
+            color: #1a8a3a;
+        }
+        .tag-orange {
+            background: #fef3e0;
+            color: #d97a00;
+        }
+        .tag-red {
+            background: #fde8e8;
+            color: #c62828;
+        }
+        .tag-gray {
+            background: #f0f2f5;
+            color: #5f6b8a;
+        }
+        .tag-purple {
+            background: #f0e6ff;
+            color: #6b3fa0;
+        }
+
+        /* 指标卡片 */
+        .metric-card {
+            background: #f8f9fc;
+            border-radius: 12px;
+            padding: 14px 16px;
+            border: 1px solid #eef0f4;
+            text-align: center;
+        }
+        .metric-card .metric-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0b1e3a;
+            line-height: 1.2;
+        }
+        .metric-card .metric-label {
+            font-size: 12px;
+            color: #6b7a9a;
+            margin-top: 2px;
+        }
+        .metric-card .metric-sub {
+            font-size: 11px;
+            color: #8b9ab0;
+            margin-top: 4px;
+        }
+
+        /* 任务卡片 (kanban) */
+        .task-card {
+            background: #f8f9fc;
+            border-radius: 12px;
+            padding: 16px 18px;
+            border: 1px solid #eef0f4;
+            transition: box-shadow 0.1s;
+        }
+        .task-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .task-card .task-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #0b1e3a;
+            margin-bottom: 6px;
+        }
+        .task-card .task-detail {
+            font-size: 12px;
+            color: #5f6b8a;
+            margin-bottom: 4px;
+        }
+        .task-card .task-detail .label {
+            color: #8b9ab0;
+        }
+
+        /* 风险行 */
+        .risk-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #f2f4f8;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 13px;
+        }
+        .risk-item:last-child {
+            border-bottom: none;
+        }
+        .risk-item .risk-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .risk-item .risk-text {
+            color: #1f2a44;
+        }
+        .risk-item .risk-tag {
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        /* 时间线垂直 */
+        .timeline-v {
+            position: relative;
+            padding-left: 28px;
+        }
+        .timeline-v::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e6ef;
+            border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 28px;
+        }
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        .timeline-item .dot {
+            position: absolute;
+            left: -22px;
+            top: 4px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #2b6ff2;
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 0 2px #d0e1fd;
+        }
+        .timeline-item .dot.gray {
+            background: #b0bccf;
+            box-shadow: 0 0 0 2px #e8eaed;
+        }
+        .timeline-item .tl-date {
+            font-size: 12px;
+            color: #6b7a9a;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        .timeline-item .tl-content {
+            font-size: 14px;
+            color: #1f2a44;
+            font-weight: 500;
+        }
+        .timeline-item .tl-desc {
+            font-size: 12px;
+            color: #6b7a9a;
+            margin-top: 2px;
+        }
+
+        /* 路线图阶段 */
+        .roadmap-stage {
+            background: #f8f9fc;
+            border-radius: 12px;
+            padding: 16px 18px;
+            border: 1px solid #eef0f4;
+            position: relative;
+        }
+        .roadmap-stage .stage-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7a9a;
+            font-weight: 500;
+        }
+        .roadmap-stage .stage-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: #0b1e3a;
+            margin: 4px 0 2px;
+        }
+        .roadmap-stage .stage-desc {
+            font-size: 12px;
+            color: #5f6b8a;
+        }
+        .roadmap-stage .stage-status {
+            margin-top: 6px;
+        }
+        .roadmap-connector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b0bccf;
+            font-size: 20px;
+            padding: 4px 0;
+        }
+
+        /* 流程图SVG容器 */
+        .flowchart-svg {
+            display: block;
+            width: 100%;
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        /* 甘特图行 */
+        .gantt-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f2f4f8;
+            font-size: 13px;
+        }
+        .gantt-row:last-child {
+            border-bottom: none;
+        }
+        .gantt-row .gantt-label {
+            min-width: 140px;
+            font-weight: 500;
+            color: #1f2a44;
+            flex-shrink: 0;
+        }
+        .gantt-row .gantt-track {
+            flex: 1;
+            height: 24px;
+            background: #f0f2f5;
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+        .gantt-row .gantt-bar {
+            height: 100%;
+            border-radius: 6px;
+            background: #d0e1fd;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            font-size: 11px;
+            color: #1f2a44;
+            font-weight: 500;
+            min-width: 20px;
+        }
+        .gantt-row .gantt-bar.blue {
+            background: #2b6ff2;
+            color: #fff;
+        }
+        .gantt-row .gantt-bar.gray {
+            background: #e0e6ef;
+            color: #5f6b8a;
+        }
+        .gantt-row .gantt-owner {
+            font-size: 11px;
+            color: #6b7a9a;
+            min-width: 70px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* 条形图 (Benchmark) */
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 6px 0;
+        }
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .bar-item .bar-label {
+            min-width: 80px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1f2a44;
+            flex-shrink: 0;
+        }
+        .bar-item .bar-track {
+            flex: 1;
+            height: 28px;
+            background: #f0f2f5;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bar-item .bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            transition: width 0.2s;
+        }
+        .bar-item .bar-fill.blue {
+            background: #2b6ff2;
+        }
+        .bar-item .bar-fill.red {
+            background: #ea4335;
+        }
+        .bar-item .bar-fill.gray {
+            background: #d0d7e2;
+            color: #4a5a7a;
+        }
+        .bar-item .bar-value {
+            min-width: 44px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2a44;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* 雷达图容器 */
+        .radar-wrap {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        .radar-wrap svg {
+            width: 100%;
+            max-width: 460px;
+            height: auto;
+        }
+
+        /* 状态小标记 */
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .status-dot.green {
+            background: #34a853;
+        }
+        .status-dot.orange {
+            background: #fbac04;
+        }
+        .status-dot.red {
+            background: #ea4335;
+        }
+        .status-dot.gray {
+            background: #b0bccf;
+        }
+
+        /* 底部 */
+        .footer-note {
+            text-align: center;
+            font-size: 12px;
+            color: #8b9ab0;
+            padding: 16px 0 4px;
+            border-top: 1px solid #eef0f4;
+            margin-top: 20px;
+        }
+        .source-notice {
+            background: #fef7e0;
+            border-radius: 8px;
+            padding: 6px 16px;
+            font-size: 12px;
+            color: #7a6a2a;
+            display: inline-block;
+            border: 1px solid #f5e6b0;
+            margin-bottom: 12px;
+        }
+        .text-muted {
+            color: #8b9ab0;
+            font-size: 12px;
+        }
+        .text-source-na {
+            color: #b8860b;
+            font-size: 11px;
+            background: #fef7e0;
+            padding: 0 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .flex {
+            display: flex;
+        }
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+        .items-center {
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 页面头部 -->
+    <div class="page-header">
+        <h1>📋 模型 Benchmark · 项目管理仪表板</h1>
+        <span class="meta-badge">📌 源数据：2026-05-22 更新</span>
+    </div>
+
+    <!-- 主题导航 -->
+    <div class="nav-tabs" id="topic-nav">
+        <a href="#timeline">📅 时间线</a>
+        <a href="#roadmap">🗺️ 路线图</a>
+        <a href="#flowchart">🔄 流程图</a>
+        <a href="#gantt">📊 甘特图</a>
+        <a href="#benchmark">📈 基准对比</a>
+        <a href="#radar">🎯 雷达图</a>
+        <a href="#task-owners">👤 负责人</a>
+        <a href="#risks">⚠️ 风险表</a>
+    </div>
+
+    <!-- ==================== 1. 时间线 ==================== -->
+    <section class="module" id="timeline">
+        <div class="module-title">📅 时间线 <span class="badge">Timeline</span></div>
+        <div class="module-sub">项目相关会议节点 <span class="source-mark">source confirmed</span></div>
+        <div class="timeline-v">
+            <div class="timeline-item">
+                <div class="dot"></div>
+                <div class="tl-date">2026-05-08 上午</div>
+                <div class="tl-content">项目进展与分工</div>
+                <div class="tl-desc">首次项目会议，明确分工与目标</div>
+            </div>
+            <div class="timeline-item">
+                <div class="dot"></div>
+                <div class="tl-date">2026-05-12 下午</div>
+                <div class="tl-content">机械臂工作讨论</div>
+                <div class="tl-desc">讨论机械臂相关工作</div>
+            </div>
+            <div class="timeline-item">
+                <div class="dot"></div>
+                <div class="tl-date">2026-05-15 上午 · 下午</div>
+                <div class="tl-content">机械臂仿真与测试流程对接 · 模型界面与精度讨论</div>
+                <div class="tl-desc">两场会议：仿真流程对接 + 模型界面精度讨论</div>
+            </div>
+            <div class="timeline-item">
+                <div class="dot"></div>
+                <div class="tl-date">2026-05-22 上午</div>
+                <div class="tl-content">项目流程测试点讨论</div>
+                <div class="tl-desc">提出自检循环流程概念，输出模型推荐报告</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 2. 路线图 ==================== -->
+    <section class="module" id="roadmap">
+        <div class="module-title">🗺️ 路线图 <span class="badge">Roadmap</span></div>
+        <div class="module-sub">项目阶段规划 <span class="source-mark">部分推断 · source not explicit</span></div>
+        <div class="grid-3">
+            <div class="roadmap-stage">
+                <div class="stage-label">阶段 1 · 已完成</div>
+                <div class="stage-title">🔍 模型初测与选型</div>
+                <div class="stage-desc">找来15个模型（5个必选），完成千问4B初步测试，输出模型对比推荐报告。</div>
+                <div class="stage-status"><span class="tag tag-green">✓ 完成</span></div>
+            </div>
+            <div class="roadmap-connector">→</div>
+            <div class="roadmap-stage">
+                <div class="stage-label">阶段 2 · 进行中</div>
+                <div class="stage-title">📦 数据集构建 & 批量测试</div>
+                <div class="stage-desc">构建10个测试点数据集，选定10+5个VLM模型跑测试，研究电路图评估数据集。</div>
+                <div class="stage-status"><span class="tag tag-orange">进行中 · 负责人: 说话人8, 令</span></div>
+            </div>
+            <div class="roadmap-connector">→</div>
+            <div class="roadmap-stage">
+                <div class="stage-label">阶段 3 · 规划中</div>
+                <div class="stage-title">⚙️ 自检循环 & 流程定版</div>
+                <div class="stage-desc">搭建自检循环流程，固定流程后AI检查并记录错误，迭代优化。</div>
+                <div class="stage-status"><span class="tag tag-gray">规划中 · 截止时间未明确</span></div>
+            </div>
+        </div>
+        <div class="text-muted mt-8">* 阶段划分基于源数据推断，部分细节标记为 source not explicit。</div>
+    </section>
+
+    <!-- ==================== 3. 流程图 ==================== -->
+    <section class="module" id="flowchart">
+        <div class="module-title">🔄 流程图 <span class="badge">自检循环 · Flowchart</span></div>
+        <div class="module-sub">自检循环流程概念 <span class="source-mark">source: 2026-05-22 会议提出</span></div>
+        <svg class="flowchart-svg" viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" style="background:#fafbfc;border-radius:12px;">
+            <defs>
+                <marker id="arrow" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+                    <path d="M0,0 L12,4 L0,8 Z" fill="#6b7a9a" />
+                </marker>
+            </defs>
+            <!-- 节点 -->
+            <rect x="30" y="40" width="160" height="52" rx="10" ry="10" fill="#e8f0fe" stroke="#2b6ff2" stroke-width="1.5" />
+            <text x="110" y="72" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2a44">固定流程输入</text>
+
+            <rect x="270" y="40" width="160" height="52" rx="10" ry="10" fill="#ffffff" stroke="#b0bccf" stroke-width="1.5" />
+            <text x="350" y="72" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2a44">模型推理输出</text>
+
+            <rect x="510" y="40" width="160" height="52" rx="10" ry="10" fill="#ffffff" stroke="#b0bccf" stroke-width="1.5" />
+            <text x="590" y="72" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2a44">AI 检查结果</text>
+
+            <rect x="270" y="160" width="160" height="52" rx="10" ry="10" fill="#fef3e0" stroke="#d97a00" stroke-width="1.5" />
+            <text x="350" y="192" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2a44">记录错误原因</text>
+
+            <rect x="510" y="160" width="160" height="52" rx="10" ry="10" fill="#fde8e8" stroke="#c62828" stroke-width="1.5" />
+            <text x="590" y="192" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2a44">反馈优化</text>
+
+            <!-- 箭头 -->
+            <line x1="190" y1="66" x2="260" y2="66" stroke="#6b7a9a" stroke-width="1.8" marker-end="url(#arrow)" />
+            <line x1="430" y1="66" x2="500" y2="66" stroke="#6b7a9a" stroke-width="1.8" marker-end="url(#arrow)" />
+            <line x1="590" y1="92" x2="590" y2="150" stroke="#6b7a9a" stroke-width="1.8" marker-end="url(#arrow)" />
+            <line x1="510" y1="186" x2="440" y2="186" stroke="#6b7a9a" stroke-width="1.8" marker-end="url(#arrow)" />
+            <line x1="430" y1="186" x2="350" y2="222" stroke="#6b7a9a" stroke-width="1.8" marker-end="url(#arrow)" />
+            <!-- 回环箭头 -->
+            <path d="M110,92 L110,240 L350,240 L350,222" fill="none" stroke="#2b6ff2" stroke-width="1.8" stroke-dasharray="6,4" marker-end="url(#arrow)" />
+            <text x="140" y="252" font-size="11" fill="#2b6ff2" font-weight="500">循环迭代</text>
+        </svg>
+        <div class="text-muted mt-8">* 流程图基于 2026-05-22 提出的自检循环概念绘制，具体步骤待细化。</div>
+    </section>
+
+    <!-- ==================== 4. 甘特图 ==================== -->
+    <section class="module" id="gantt">
+        <div class="module-title">📊 甘特图 <span class="badge">Gantt</span></div>
+        <div class="module-sub">任务时间规划 <span class="source-mark">截止时间 source not explicit</span></div>
+        <div class="source-notice">⚠ 截止时间在原数据中未明确，任务条宽度仅示意相对顺序。</div>
+        <div style="overflow-x:auto;">
+            <div style="min-width:560px;">
+                <div style="display:flex;align-items:center;gap:12px;padding:4px 0 8px;font-size:11px;color:#6b7a9a;border-bottom:1px solid #eef0f4;">
+                    <span style="min-width:140px;">任务</span>
+                    <span style="flex:1;text-align:center;">时间进度（未明确）</span>
+                    <span style="min-width:70px;text-align:right;">负责人</span>
+                </div>
+                <div class="gantt-row">
+                    <span class="gantt-label">构建10个测试点数据集</span>
+                    <div class="gantt-track">
+                        <div class="gantt-bar gray" style="width:60%;">待规划</div>
+                    </div>
+                    <span class="gantt-owner">说话人8</span>
+                </div>
+                <div class="gantt-row">
+                    <span class="gantt-label">选定10+5个VLM模型跑测试</span>
+                    <div class="gantt-track">
+                        <div class="gantt-bar gray" style="width:50%;">待规划</div>
+                    </div>
+                    <span class="gantt-owner">令</span>
+                </div>
+                <div class="gantt-row">
+                    <span class="gantt-label">研究电路图评估数据集</span>
+                    <div class="gantt-track">
+                        <div class="gantt-bar gray" style="width:40%;">待规划</div>
+                    </div>
+                    <span class="gantt-owner">令</span>
+                </div>
+                <div class="gantt-row">
+                    <span class="gantt-label">搭建自检循环流程</span>
+                    <div class="gantt-track">
+                        <div class="gantt-bar gray" style="width:35%;">待规划</div>
+                    </div>
+                    <span class="gantt-owner">说话人5、8</span>
+                </div>
+            </div>
+        </div>
+        <div class="text-muted mt-8">* 截止时间在原数据中均为「未明确」或「原文未明确」，故以「待规划」显示。</div>
+    </section>
+
+    <!-- ==================== 5. 基准对比图 ==================== -->
+    <section class="module" id="benchmark">
+        <div class="module-title">📈 模型基准对比 <span class="badge">Benchmark</span></div>
+        <div class="module-sub">千问4B 初步测试结果 <span class="source-mark">source confirmed</span> · 其他模型数据待补充</div>
+        <div class="grid-2" style="margin-bottom:16px;">
+            <div class="metric-card">
+                <div class="metric-value">60%</div>
+                <div class="metric-label">位号图正确率</div>
+                <div class="metric-sub">6/10 · 千问4B</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">0%</div>
+                <div class="metric-label">实物图正确率</div>
+                <div class="metric-sub">0/10 · 千问4B</div>
+            </div>
+        </div>
+        <div style="font-size:13px;font-weight:500;color:#1f2a44;margin-bottom:12px;">推荐模型对比（source: 选型推荐报告）</div>
+        <div class="bar-chart">
+            <div class="bar-item">
+                <span class="bar-label">千问 4B</span>
+                <div class="bar-track">
+                    <div class="bar-fill blue" style="width:60%;">位号图 60%</div>
+                </div>
+                <span class="bar-value">60%</span>
+            </div>
+            <div class="bar-item">
+                <span class="bar-label">千问 4B</span>
+                <div class="bar-track">
+                    <div class="bar-fill red" style="width:0%;">实物图 0%</div>
+                </div>
+                <span class="bar-value">0%</span>
+            </div>
+            <div class="bar-item">
+                <span class="bar-label">千问 (推荐)</span>
+                <div class="bar-track">
+                    <div class="bar-fill gray" style="width:20%;">待测试 · 支持JSON</div>
+                </div>
+                <span class="bar-value">—</span>
+            </div>
+            <div class="bar-item">
+                <span class="bar-label">Gemini</span>
+                <div class="bar-track">
+                    <div class="bar-fill gray" style="width:20%;">待测试 · 上下文大</div>
+                </div>
+                <span class="bar-value">—</span>
+            </div>
+            <div class="bar-item">
+                <span class="bar-label">GPT</span>
+                <div class="bar-track">
+                    <div class="bar-fill gray" style="width:20%;">待测试 · 逻辑推理</div>
+                </div>
+                <span class="bar-value">—</span>
+            </div>
+            <div class="bar-item">
+                <span class="bar-label">Claude</span>
+                <div class="bar-track">
+                    <div class="bar-fill gray" style="width:20%;">待测试 · 二次审核</div>
+                </div>
+                <span class="bar-value">—</span>
+            </div>
+        </div>
+        <div class="text-muted mt-8">* 除千问4B位号图/实物图数据外，其他模型性能数据未在源中明确，标记为「待测试」。</div>
+    </section>
+
+    <!-- ==================== 6. 雷达图 ==================== -->
+    <section class="module" id="radar">
+        <div class="module-title">🎯 雷达图 <span class="badge">Radar · 千问4B 能力概览</span></div>
+        <div class="module-sub">基于源数据及推荐理由 <span class="source-mark">部分维度 source not explicit</span></div>
+        <div class="source-notice" style="margin-bottom:4px;">标注「⚡」为有源数据支撑；「◇」为推断或待确认。</div>
+        <div class="radar-wrap">
+            <svg viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="radarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#2b6ff2" stop-opacity="0.25"/>
+                        <stop offset="100%" stop-color="#2b6ff2" stop-opacity="0.05"/>
+                    </linearGradient>
+                </defs>
+                <!-- 坐标网格 -->
+                <circle cx="240" cy="240" r="160" fill="none" stroke="#e8eaed" stroke-width="1.2"/>
+                <circle cx="240" cy="240" r="106" fill="none" stroke="#e8eaed" stroke-width="1"/>
+                <circle cx="240" cy="240" r="53" fill="none" stroke="#e8eaed" stroke-width="1"/>
+                <line x1="240" y1="80" x2="240" y2="400" stroke="#e8eaed" stroke-width="1"/>
+                <line x1="80" y1="240" x2="400" y2="240" stroke="#e8eaed" stroke-width="1"/>
+                <line x1="126" y1="126" x2="354" y2="354" stroke="#e8eaed" stroke-width="1"/>
+                <line x1="354" y1="126" x2="126" y2="354" stroke="#e8eaed" stroke-width="1"/>
+
+                <!-- 数据多边形 (千问4B) -->
+                <!-- 维度顺序: 位号图识别(60%), 实物图识别(0%), 流程遵循(50%◇), JSON支持(80%◇), 上下文(50%◇), 逻辑推理(50%◇) -->
+                <!-- 角度: 0°, 60°, 120°, 180°, 240°, 300° 对应坐标 -->
+                <!-- 半径缩放: r=160 * (value/100) -->
+                <!-- 0° (上): (240, 240-160*0.6=144) -->
+                <!-- 60°: (240+160*0*0.866=240, 240-160*0*0.5=240) 实际0% -> 中心 -->
+                <!-- 120°: (240-160*0.5*0.866=240-69.28=170.72, 240-160*0.5*0.5=240-40=200) 50% -> r=80 -->
+                <!-- 180°: (240-160*0.8=112, 240) 80% -> r=128 -->
+                <!-- 240°: (240-160*0.5*0.866=240-69.28=170.72, 240+160*0.5*0.5=240+40=280) 50% -> r=80 -->
+                <!-- 300°: (240+160*0.5*0.866=240+69.28=309.28, 240+160*0.5*0.5=240+40=280) 50% -> r=80 -->
+                <polygon points="240,144 240,240 170.72,200 112,240 170.72,280 309.28,280" fill="url(#radarGrad)" stroke="#2b6ff2" stroke-width="2.2" stroke-linejoin="round"/>
+                <!-- 数据点 -->
+                <circle cx="240" cy="144" r="5" fill="#2b6ff2" stroke="#fff" stroke-width="1.5"/>
+                <circle cx="240" cy="240" r="5" fill="#ea4335" stroke="#fff" stroke-width="1.5"/>
+                <circle cx="170.72" cy="200" r="5" fill="#fbac04" stroke="#fff" stroke-width="1.5"/>
+                <circle cx="112" cy="240" r="5" fill="#34a853" stroke="#fff" stroke-width="1.5"/>
+                <circle cx="170.72" cy="280" r="5" fill="#fbac04" stroke="#fff" stroke-width="1.5"/>
+                <circle cx="309.28" cy="280" r="5" fill="#fbac04" stroke="#fff" stroke-width="1.5"/>
+
+                <!-- 维度标签 -->
+                <text x="240" y="70" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2a44">位号图识别 ⚡</text>
+                <text x="240" y="68" text-anchor="middle" font-size="10" fill="#6b7a9a">60%</text>
+
+                <text x="240" y="430" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2a44">实物图识别 ⚡</text>
+                <text x="240" y="446" text-anchor="middle" font-size="10" fill="#6b7a9a">0%</text>
+
+                <text x="110" y="194" text-anchor="end" font-size="13" font-weight="600" fill="#1f2a44">流程遵循 ◇</text>
+                <text x="110" y="210" text-anchor="end" font-size="10" fill="#6b7a9a">50%</text>
+
+                <text x="370" y="194" text-anchor="start" font-size="13" font-weight="600" fill="#1f2a44">逻辑推理 ◇</text>
+                <text x="370" y="210" text-anchor="start" font-size="10" fill="#6b7a9a">50%</text>
+
+                <text x="370" y="310" text-anchor="start" font-size="13" font-weight="600" fill="#1f2a44">上下文 ◇</text>
+                <text x="370" y="326" text-anchor="start" font-size="10" fill="#6b7a9a">50%</text>
+
+                <text x="110" y="310" text-anchor="end" font-size="13" font-weight="600" fill="#1f2a44">JSON支持 ◇</text>
+                <text x="110" y="326" text-anchor="end" font-size="10" fill="#6b7a9a">80%</text>
+
+                <!-- 图例 -->
+                <circle cx="60" cy="440" r="4" fill="#2b6ff2"/>
+                <text x="70" y="445" font-size="11" fill="#1f2a44">千问4B (有数据)</text>
+                <text x="180" y="445" font-size="10" fill="#8b9ab0">⚡ source confirmed  ◇ source not explicit</text>
+            </svg>
+        </div>
+        <div class="text-muted" style="text-align:center;">* 带◇的维度基于推荐理由推断，未在源数据中给出具体分数。</div>
+    </section>
+
+    <!-- ==================== 7. 任务负责人卡片 ==================== -->
+    <section class="module" id="task-owners">
+        <div class="module-title">👤 任务负责人 <span class="badge">Task Owners · Kanban</span></div>
+        <div class="module-sub">待办任务及负责人 <span class="source-mark">source confirmed</span></div>
+        <div class="grid-2">
+            <div class="task-card">
+                <div class="task-title">📦 构建10个测试点数据集</div>
+                <div class="task-detail"><span class="label">负责人：</span>说话人8</div>
+                <div class="task-detail"><span class="label">截止时间：</span><span class="text-source-na">原文未明确</span></div>
+                <div class="task-detail"><span class="label">优先级：</span><span class="tag tag-orange">中</span></div>
+                <div class="task-detail" style="margin-top:4px;font-size:11px;color:#8b9ab0;">围绕「看」构建测试点数据集</div>
+            </div>
+            <div class="task-card">
+                <div class="task-title">🧪 选定10+5个VLM模型跑测试</div>
+                <div class="task-detail"><span class="label">负责人：</span>令</div>
+                <div class="task-detail"><span class="label">截止时间：</span><span class="text-source-na">未明确</span></div>
+                <div class="task-detail"><span class="label">优先级：</span><span class="tag tag-orange">中</span></div>
+                <div class="task-detail" style="margin-top:4px;font-size:11px;color:#8b9ab0;">10个候选 + 5个必选</div>
+            </div>
+            <div class="task-card">
+                <div class="task-title">📐 研究电路图评估数据集</div>
+                <div class="task-detail"><span class="label">负责人：</span>令</div>
+                <div class="task-detail"><span class="label">截止时间：</span><span class="text-source-na">未明确</span></div>
+                <div class="task-detail"><span class="label">优先级：</span><span class="tag tag-orange">中</span></div>
+                <div class="task-detail" style="margin-top:4px;font-size:11px;color:#8b9ab0;">如MMMU图像/电路子集</div>
+            </div>
+            <div class="task-card">
+                <div class="task-title">🔄 搭建自检循环流程</div>
+                <div class="task-detail"><span class="label">负责人：</span>说话人5、8</div>
+                <div class="task-detail"><span class="label">截止时间：</span><span class="text-source-na">未明确</span></div>
+                <div class="task-detail"><span class="label">优先级：</span><span class="tag tag-orange">中</span></div>
+                <div class="task-detail" style="margin-top:4px;font-size:11px;color:#8b9ab0;">固定流程 → AI输出 → AI检查 → 记录错误</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 8. 风险状态表 ==================== -->
+    <section class="module" id="risks">
+        <div class="module-title">⚠️ 风险状态表 <span class="badge">Risk Status</span></div>
+        <div class="module-sub">已识别风险 <span class="source-mark">source confirmed</span></div>
+        <table class="mini-table">
+            <thead>
+                <tr>
+                    <th style="width:8%;">状态</th>
+                    <th style="width:52%;">风险描述</th>
+                    <th style="width:18%;">影响</th>
+                    <th style="width:22%;">数据来源</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="tag tag-red">高</span></td>
+                    <td>千问模型像素压缩可能导致精度损失</td>
+                    <td><span class="tag tag-orange">模型精度</span></td>
+                    <td><span class="tag tag-gray">source confirmed</span></td>
+                </tr>
+                <tr>
+                    <td><span class="tag tag-orange">中</span></td>
+                    <td>模型前处理差异（PDF转图等）影响公平比较</td>
+                    <td><span class="tag tag-orange">评估公平性</span></td>
+                    <td><span class="tag tag-gray">source confirmed</span></td>
+                </tr>
+                <tr>
+                    <td><span class="tag tag-orange">中</span></td>
+                    <td>数据集标注不准确，导致Benchmark结果不可靠</td>
+                    <td><span class="tag tag-red">结果可信度</span></td>
+                    <td><span class="tag tag-gray">source confirmed</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:#5f6b8a;">
+            <span>🟢 低风险 · <span style="font-weight:500;">0</span> 项</span>
+            <span>🟠 中风险 · <span style="font-weight:500;">2</span> 项</span>
+            <span>🔴 高风险 · <span style="font-weight:500;">1</span> 项</span>
+        </div>
+    </section>
+
+    <!-- ==================== 9. 最近变化 ==================== -->
+    <section class="module" id="changes">
+        <div class="module-title">📌 最近变化 <span class="badge">Updates</span></div>
+        <div class="module-sub">source confirmed</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #f2f4f8;">
+                <span class="tag tag-orange">更新</span>
+                <span style="font-size:13px;color:#1f2a44;">初步测试结果显示实物图准确率为0%，需建数据集并优化。</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #f2f4f8;">
+                <span class="tag tag-green">新增</span>
+                <span style="font-size:13px;color:#1f2a44;">模型选型推荐列表已输出（5月22日）。</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:8px 0;">
+                <span class="tag tag-green">新增</span>
+                <span style="font-size:13px;color:#1f2a44;">自检循环流程概念提出（5月22日）。</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部 -->
+    <div class="footer-note">
+        模型 Benchmark 项目仪表板 · 数据源截至 2026-05-22 · 仅使用 source-confirmed 事实构建
+    </div>
+
+</body>
+</html>

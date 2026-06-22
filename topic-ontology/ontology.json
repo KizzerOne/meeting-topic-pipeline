@@ -1,0 +1,498 @@
+{
+  "version": 2,
+  "updated_at": "2026-06-22T07:41:28.320Z",
+  "promote_threshold": 0.9,
+  "source": "meeting-knowledge-bootstrap",
+  "roots": [
+    {
+      "id": "0ae1f95c-0ed0-4b83-85d4-9a9fc801cc22",
+      "label": "KPIT 机械臂自动测试 Demo",
+      "level": 1,
+      "tree": "program",
+      "parent_id": null,
+      "status": "stable",
+      "confidence": 0.85,
+      "definition": "项目根节点",
+      "scope": "",
+      "aliases": [],
+      "evidence_refs": [],
+      "children": [
+        {
+          "id": "235510d5-7d75-4b66-bb4c-192fa5f63fa2",
+          "label": "Demo 路线图 / 里程碑",
+          "level": 1,
+          "tree": "demo",
+          "parent_id": "0ae1f95c-0ed0-4b83-85d4-9a9fc801cc22",
+          "status": "stable",
+          "confidence": 0.85,
+          "definition": "交付导向：阶段目标、演示范围、里程碑与阻塞",
+          "scope": "",
+          "aliases": [],
+          "evidence_refs": [],
+          "children": [
+            {
+              "id": "ea69236a-d8ed-462d-b2d6-29a70dd56db5",
+              "label": "5月底 Demo 目标",
+              "level": 2,
+              "tree": "demo",
+              "parent_id": "235510d5-7d75-4b66-bb4c-192fa5f63fa2",
+              "status": "stable",
+              "confidence": 0.85,
+              "definition": "# 会议总览持续汇总\n\n## 项目当前状态\n\n项目整体处于从原型验证向自动化测试流程集成的关键阶段。核心流程（输入→大模型→仿真/机械臂）已初步跑通，但各模块仍存在精度、稳定性、接口对齐等问题。当前重点为：\n- 在仿真环境中跑通“看”测试点的自动化测试闭环。\n- 优化VLM测试点定位精度与稳定性。\n- 完成机械臂真机与仿真的路径规划与误差控制。\n- 构建数据集与模型 Benchmark，为后续流程固化提供依据。\n- 推进GitHub CI与Pages展示，实现文档自动化与项目进展可视化。\n\n## 已确认结论\n\n| 事项 | 确认结果 | 来源会议 |\n|------|----------|----------|\n| 项目三大板块：大模型调度、机械臂控制、整体架构与CI | 确认 | 5月8日、5月12日等多次会议 |\n| 机械臂实体机接口已调通（TCP命令XYZR） | 确认 | 5月15日会议 |\n| 仿真机械臂可移动但误差4mm（目标0.05mm） | 确认 | 5月15日会议 |\n| 机械臂运动精度提升至0.1（相对基准点） | 确认 | 5月15日下午会议 |\n| VLM测试点",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "9b00a0d1-0443-4fcb-b5b3-ebe5543f51eb",
+          "label": "项目管理度量视图",
+          "level": 1,
+          "tree": "pm",
+          "parent_id": "0ae1f95c-0ed0-4b83-85d4-9a9fc801cc22",
+          "status": "stable",
+          "confidence": 0.85,
+          "definition": "范围、进度、成本、质量、风险、干系人、沟通、变更",
+          "scope": "",
+          "aliases": [],
+          "evidence_refs": [],
+          "children": [
+            {
+              "id": "c94e53b0-0161-4db1-8c0d-e985b4af5377",
+              "label": "范围与交付物",
+              "level": 2,
+              "tree": "pm",
+              "parent_id": "9b00a0d1-0443-4fcb-b5b3-ebe5543f51eb",
+              "status": "emerging",
+              "confidence": 0.7,
+              "definition": "PM 维度：范围与交付物",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            },
+            {
+              "id": "dd72c8f2-bae0-44ed-a62b-711472c7e8a5",
+              "label": "进度与里程碑",
+              "level": 2,
+              "tree": "pm",
+              "parent_id": "9b00a0d1-0443-4fcb-b5b3-ebe5543f51eb",
+              "status": "emerging",
+              "confidence": 0.7,
+              "definition": "PM 维度：进度与里程碑",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            },
+            {
+              "id": "eebabb26-3a13-497c-846f-b80a793cafcd",
+              "label": "资源与成本",
+              "level": 2,
+              "tree": "pm",
+              "parent_id": "9b00a0d1-0443-4fcb-b5b3-ebe5543f51eb",
+              "status": "emerging",
+              "confidence": 0.7,
+              "definition": "PM 维度：资源与成本",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            },
+            {
+              "id": "64844d6c-d2b4-4c52-9451-bb4a154005d1",
+              "label": "质量",
+              "level": 2,
+              "tree": "pm",
+              "parent_id": "9b00a0d1-0443-4fcb-b5b3-ebe5543f51eb",
+              "status": "emerging",
+              "confidence": 0.7,
+              "definition": "PM 维度：质量",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            },
+            {
+              "id": "ee4d925d-5553-4ea2-bbe8-aa58a23db2b8",
+              "label": "风险与问题",
+              "level": 2,
+              "tree": "pm",
+              "parent_id": "9b00a0d1-0443-4fcb-b5b3-ebe5543f51eb",
+              "status": "emerging",
+              "confidence": 0.7,
+              "definition": "PM 维度：风险与问题",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            },
+            {
+              "id": "5d574893-66ad-456a-b5ec-3478af40a987",
+              "label": "干系人与责任",
+              "level": 2,
+              "tree": "pm",
+              "parent_id": "9b00a0d1-0443-4fcb-b5b3-ebe5543f51eb",
+              "status": "emerging",
+              "confidence": 0.7,
+              "definition": "PM 维度：干系人与责任",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            },
+            {
+              "id": "0f9e94e0-3485-4260-845d-713d5ee178f8",
+              "label": "沟通与协作",
+              "level": 2,
+              "tree": "pm",
+              "parent_id": "9b00a0d1-0443-4fcb-b5b3-ebe5543f51eb",
+              "status": "emerging",
+              "confidence": 0.7,
+              "definition": "PM 维度：沟通与协作",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            },
+            {
+              "id": "2dbab82c-d6cf-4329-9957-07f1d9840901",
+              "label": "变更与决策",
+              "level": 2,
+              "tree": "pm",
+              "parent_id": "9b00a0d1-0443-4fcb-b5b3-ebe5543f51eb",
+              "status": "emerging",
+              "confidence": 0.7,
+              "definition": "PM 维度：变更与决策",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "63c1f3f0-3992-457d-b310-365571a46eba",
+          "label": "能力域技术树",
+          "level": 1,
+          "tree": "capability",
+          "parent_id": "0ae1f95c-0ed0-4b83-85d4-9a9fc801cc22",
+          "status": "stable",
+          "confidence": 0.85,
+          "definition": "技术能力按域组织，由会议与模块知识归纳",
+          "scope": "",
+          "aliases": [],
+          "evidence_refs": [],
+          "children": [
+            {
+              "id": "e0e7613d-ec12-4ffd-9ab9-9c4aca90cfd2",
+              "label": "Demo_路线图",
+              "level": 2,
+              "tree": "capability",
+              "parent_id": "63c1f3f0-3992-457d-b310-365571a46eba",
+              "status": "stable",
+              "confidence": 0.85,
+              "definition": "# Demo 路线图\n\n## 模块目标\n\n明确5月底和6月底的Demo目标、时间表、任务分配和当前状态，确保项目按计划推进。\n\n## 相关会议\n\n- 2026-05-08 上午：项目进展与分工\n- 2026-05-15 上午：机械臂仿真与测试流程对接\n- 2026-05-22 上午：项目流程测试点讨论\n- Debugging_Agent项目整体规划文档\n\n## 当前状态\n",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": [
+                {
+                  "id": "9194f75b-7a99-4e67-abe0-2c0082da6198",
+                  "label": "模型界面与精度讨论_20260515",
+                  "level": 3,
+                  "tree": "capability",
+                  "parent_id": "e0e7613d-ec12-4ffd-9ab9-9c4aca90cfd2",
+                  "status": "emerging",
+                  "confidence": 0.7,
+                  "definition": "## 一句话结论\n本次会议主要确认机械臂运动精度已提升至0.1，避障功能初步实现但仍有卡住不动的缺陷，团队决定短期内不采用智能规划，先通过流程解决；同时明确放弃矢量数据库方案，转向自然语言检索，并确认不进行模型微调。\n\n## 总体概览\n- 会议围绕模型界面、机械臂精度、避障功能、大模型输入输出接口、数据集创建及模型挑选等议题展开。\n- 关键进展：运动精度从早上不足提升至0.1，避障功能基础框架已搭建但存在卡住无法继续的问题。\n- 数据方面：已创建初步数据集结构，但部分标注点不准确，需人工修正或借助小工具辅助。\n- 技术路线：不再做矢量数据库，改用自然语言检索；不计划做模型微调，仅通过脚本（Skills）与流程驱动AI。\n- 团队工作方式：不使用传统汽车行业工具（如JIRA），直接通过GitHub + AI整理文档与交流内容。\n\n## 关键讨论点\n| 序号 | 议题 | 主要内容 | 相关人",
+                  "scope": "",
+                  "aliases": [],
+                  "evidence_refs": [
+                    {
+                      "meeting_path": "pdf-chat-summaries/KPIT会议/2026-05-15_下午5点38_模型界面讨论/模型界面与精度讨论_20260515.md",
+                      "span": "## 一句话结论\n本次会议主要确认机械臂运动精度已提升至0.1，避障功能初步实现但仍有卡住不动的缺陷，团队决定短期内不采用智能规划，先通过流程解决；同时明确放弃矢量数据库方案，转向自然语言检索，并确认不进行模型微调。\n\n## 总体概览\n- 会议围绕模型界面、机械臂精度、避障功能、大模型输入输出接口、数据集创建及模型挑选等议题展开。\n- 关键进展：运动精度从早上不足提升至0.1，避障功能基础框架已搭"
+                    }
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "08210272-d10d-404d-ad4a-137330f6e06a",
+                  "label": "项目流程测试点讨论_2026-05-22",
+                  "level": 3,
+                  "tree": "capability",
+                  "parent_id": "e0e7613d-ec12-4ffd-9ab9-9c4aca90cfd2",
+                  "status": "emerging",
+                  "confidence": 0.7,
+                  "definition": "## 一句话结论\n本次会议确认了项目整体流程（输入→大模型→仿真/机械臂）已初步跑通，但大模型调用存在网络超时、连接中断等问题，同时机械臂调试、VLM精度及数据集自检流程需当日完成，后续将拆分为三个课题推进。\n\n## 总体概览\n- 会议时间：2026年5月22日上午10:02，持续约55分钟，主要讨论项目流程测试点。\n- 参与人员：包括项目负责人（说话人2/4）、架构/模型开发人员（说话人1、5、6、8）、机械臂调试人员（说话人7）及学生（说话人3）。\n- 核心议题：架构图与状态机对账、大模型网络延迟/中断问题、机械臂避障反馈接口、VLM（视觉大模型）精度与流程切换、数据集标注与模型选型、备案流程（会议总结与网页生成）。\n- 整体进展：前端到机械臂的流程已跑通（以仿真模拟大模型输出），但实际大模型调用时长不稳定（最长42分钟），前端15分钟超时导致进程被误杀；机械臂避障反馈已实现，但通讯方",
+                  "scope": "",
+                  "aliases": [],
+                  "evidence_refs": [
+                    {
+                      "meeting_path": "pdf-chat-summaries/KPIT会议/2026-05-22_上午10点02_项目流程测试点讨论/项目流程测试点讨论_2026-05-22.md",
+                      "span": "## 一句话结论\n本次会议确认了项目整体流程（输入→大模型→仿真/机械臂）已初步跑通，但大模型调用存在网络超时、连接中断等问题，同时机械臂调试、VLM精度及数据集自检流程需当日完成，后续将拆分为三个课题推进。\n\n## 总体概览\n- 会议时间：2026年5月22日上午10:02，持续约55分钟，主要讨论项目流程测试点。\n- 参与人员：包括项目负责人（说话人2/4）、架构/模型开发人员（说话人1、5、"
+                    }
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "24092768-a69c-4393-b6b8-525e32aca11e",
+                  "label": "四个Topic说明_20260526",
+                  "level": 3,
+                  "tree": "capability",
+                  "parent_id": "e0e7613d-ec12-4ffd-9ab9-9c4aca90cfd2",
+                  "status": "emerging",
+                  "confidence": 0.7,
+                  "definition": "## 一句话结论\n本次会议介绍了四个技术Topic：理想HaloOS通讯中间件基准测试、电子电气架构AI agent训练环境、debug agent以及双基线研发流程，并安排团队分配（每人选两个志愿，周四前提交）。\n\n## 总体概览\n- 会议于2026年5月26日20:20开始，时长约34分钟，由说话人1主讲，另有说话人2、3参与。\n- 四个Topic涵盖：通讯架构（理想HaloOS/VBS）、电子电气架构AI agent训练环境、debug agent、双基线研发流程。\n- 通讯架构侧重性能benchmark、零拷贝、路由策略等；EAA agent环境侧重软硬件平台搭建与测试驱动；双基线流程分为终端、云端知识库和公司平台三部分。\n- 团队分配要求每人报两个志愿，6月1日有新人加入，每个Topic限2人。\n\n## 关键讨论点\n| 序号 | 议题 | 主要内容 | 相关人员 | 结论或状态 ",
+                  "scope": "",
+                  "aliases": [],
+                  "evidence_refs": [
+                    {
+                      "meeting_path": "pdf-chat-summaries/KPIT会议/2026-05-26_下午8点20_四个Topic说明/四个Topic说明_20260526.md",
+                      "span": "## 一句话结论\n本次会议介绍了四个技术Topic：理想HaloOS通讯中间件基准测试、电子电气架构AI agent训练环境、debug agent以及双基线研发流程，并安排团队分配（每人选两个志愿，周四前提交）。\n\n## 总体概览\n- 会议于2026年5月26日20:20开始，时长约34分钟，由说话人1主讲，另有说话人2、3参与。\n- 四个Topic涵盖：通讯架构（理想HaloOS/VBS）、电"
+                    }
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "5bd8f833-9249-412a-9066-a726ee26e583",
+                  "label": "通讯架构讨论_20260602",
+                  "level": 3,
+                  "tree": "capability",
+                  "parent_id": "e0e7613d-ec12-4ffd-9ab9-9c4aca90cfd2",
+                  "status": "emerging",
+                  "confidence": 0.7,
+                  "definition": "## 一句话结论\n本次会议确定了通讯协议栈（Pro与Light）的测试策略：先理解运行环境与架构差异，再设计测试用例并产出对比报告，重点分析效率瓶颈并优化SIP协议。\n\n## 总体概览\n- 会议背景：针对通讯中间件（Pro/Light）的仿真测试环境进行架构梳理与Benchmark规划。\n- 参与方：说话人1（主导）、说话人2、说话人3。\n- 主要议题：运行环境（仿真 vs 真实硬件）、协议栈架构、测试用例设计、竞品分析、产出物要求。\n- 整体进展：已跑通基本环境，下一步需要画出架构图、理解各层IO、分析仿真与真实的差异，并设计有意义的测试用例。\n\n## 关键讨论点\n| 序号 | 议题 | 主要内容 | 相关人员 | 结论或状态 |\n|------|------|----------|----------|------------|\n| 1 | 运行环境架构 | 当前在WSL两个终端运行D",
+                  "scope": "",
+                  "aliases": [],
+                  "evidence_refs": [
+                    {
+                      "meeting_path": "pdf-chat-summaries/KPIT会议/2026-06-02_下午3点37_通讯架构讨论/通讯架构讨论_20260602.md",
+                      "span": "## 一句话结论\n本次会议确定了通讯协议栈（Pro与Light）的测试策略：先理解运行环境与架构差异，再设计测试用例并产出对比报告，重点分析效率瓶颈并优化SIP协议。\n\n## 总体概览\n- 会议背景：针对通讯中间件（Pro/Light）的仿真测试环境进行架构梳理与Benchmark规划。\n- 参与方：说话人1（主导）、说话人2、说话人3。\n- 主要议题：运行环境（仿真 vs 真实硬件）、协议栈架构"
+                    }
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "7d633de3-5f2d-408f-a25e-ba5a917d906e",
+              "label": "GitHub_CI_Pages",
+              "level": 2,
+              "tree": "capability",
+              "parent_id": "63c1f3f0-3992-457d-b310-365571a46eba",
+              "status": "stable",
+              "confidence": 0.85,
+              "definition": "# GitHub CI Pages\n\n## 模块目标\n\n实现文档上传、自动转换（非结构化→Markdown→HTML）、CI流程、GitHub Pages展示，支持差异更新和主题分类。\n\n## 相关会议\n\n- 2026-05-08 上午：项目进展与分工\n- 2026-05-12 下午：机械臂工作讨论\n- 2026-05-15 下午：资料更新讨论\n- 2026-05-15 下午：模型界面与精度讨论\n- 2026-05-22 上午：项目流程测试点讨论\n\n## 当前状态",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            },
+            {
+              "id": "274c9207-f9b9-4d37-9add-5d0daea49128",
+              "label": "VLM测试点定位",
+              "level": 2,
+              "tree": "capability",
+              "parent_id": "63c1f3f0-3992-457d-b310-365571a46eba",
+              "status": "stable",
+              "confidence": 0.85,
+              "definition": "# VLM测试点定位\n\n## 模块目标\n\n利用视觉大模型（VLM）从位号图、原理图、实物图中自动识别并定位测试点（如芯片引脚），为机械臂提供精确坐标。\n\n## 相关会议\n\n- 2026-05-08 上午：项目进展与分工\n- 2026-05-12 下午：机械臂工作讨论\n- 2026-05-15 上午：机械臂仿真与测试流程对接\n- 2026-05-15 下午：模型界面与精度讨论\n- 2026-05-22 上午：项目流程测试点讨论\n- 2026年5月12日下午：VLM与机械臂项目进展\n- 2026-05-15 资料更新讨论",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": [
+                {
+                  "id": "2e862857-2fb1-48f8-a1f1-e8a2f41a4dcd",
+                  "label": "机械臂仿真与测试流程对接_20260515",
+                  "level": 3,
+                  "tree": "capability",
+                  "parent_id": "274c9207-f9b9-4d37-9add-5d0daea49128",
+                  "status": "emerging",
+                  "confidence": 0.7,
+                  "definition": "## 一句话结论\n\n本次会议明确了机械臂仿真与实体接口已基本调通，但大模型输出缺少Z轴、VLM预处理图像质量差等问题影响精度；要求今天完成接口联调并画出架构图，后续重点在仿真环境跑通自动化测试流程。\n\n## 总体概览\n\n- 会议背景：团队针对机械臂仿真、实体控制、大模型接口、VLM测试点定位、数据集构建等模块进行进度同步。\n- 参与方：框架设计（说话人3）、机械臂仿真（说话人4）、实体机械臂（说话人6）、前端/GUI（说话人5）、大模型对接（说话人4）、数据集测试（说话人8），由说话人2主持。\n- 主要议题：各模块进展、接口联调、测试计划、误差问题、VLM稳定性、数据集构建。\n- 整体进展：机械臂实体已调通XYZ移动，仿真可移动但误差大，VLM测试点定位不稳定，数据集初步测试准确率低。\n- <span class=\"change-new\">新增目标：今天内所有接口调通，在仿真环境跑通最小闭",
+                  "scope": "",
+                  "aliases": [],
+                  "evidence_refs": [
+                    {
+                      "meeting_path": "pdf-chat-summaries/KPIT会议/2026-05-15_上午10点02_原始会议转写/机械臂仿真与测试流程对接_20260515.md",
+                      "span": "## 一句话结论\n\n本次会议明确了机械臂仿真与实体接口已基本调通，但大模型输出缺少Z轴、VLM预处理图像质量差等问题影响精度；要求今天完成接口联调并画出架构图，后续重点在仿真环境跑通自动化测试流程。\n\n## 总体概览\n\n- 会议背景：团队针对机械臂仿真、实体控制、大模型接口、VLM测试点定位、数据集构建等模块进行进度同步。\n- 参与方：框架设计（说话人3）、机械臂仿真（说话人4）、实体机械臂（说话"
+                    }
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "9648aef8-a5a7-4fbc-9f03-54b5eb03b828",
+              "label": "仿真机械臂",
+              "level": 2,
+              "tree": "capability",
+              "parent_id": "63c1f3f0-3992-457d-b310-365571a46eba",
+              "status": "stable",
+              "confidence": 0.85,
+              "definition": "# 仿真机械臂\n\n## 模块目标\n\n在仿真环境（Isaac Sim 或其它平台）中实现机械臂的路径规划、运动控制、避障验证，作为实体机械臂的补充，加速算法调试与流程验证。\n\n## 相关会议\n\n- 2026-05-08 上午：项目进展与分工\n- 2026-05-12 下午：机械臂工作讨论\n- 2026-05-15 上午：机械臂仿真与测试流程对接\n- 2026-05-15 下午：模型界面与精度讨论\n- 2026-05-22 上午：项目流程测试点讨论\n\n## 当前状态",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            },
+            {
+              "id": "e52a57f9-0f47-43f5-a9ae-c38037280b21",
+              "label": "机械臂控制",
+              "level": 2,
+              "tree": "capability",
+              "parent_id": "63c1f3f0-3992-457d-b310-365571a46eba",
+              "status": "stable",
+              "confidence": 0.85,
+              "definition": "# 机械臂控制\n\n## 模块目标\n\n实现真实机械臂（MG400）的运动控制，包括XYZR移动、夹具夹持、避障反馈，并与大模型调度层对接，完成测试点定位后的物理操作。\n\n## 相关会议\n\n- 2026-05-08 上午：项目进展与分工\n- 2026-05-12 下午：机械臂工作讨论\n- 2026-05-15 上午：机械臂仿真与测试流程对接\n- 2026-05-15 下午：模型界面与精度讨论\n- 2026-05-22 上午：项目流程测试点讨论\n\n## 当前状态",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": [
+                {
+                  "id": "b53822e6-3643-4ba1-a18c-0071812558c3",
+                  "label": "机械臂项目进展与分工_2026-05-08",
+                  "level": 3,
+                  "tree": "capability",
+                  "parent_id": "e52a57f9-0f47-43f5-a9ae-c38037280b21",
+                  "status": "emerging",
+                  "confidence": 0.7,
+                  "definition": "## 一句话结论\n本次会议确认了机械臂项目的三个主要工作方向（大模型调度、机械臂控制、整体架构与 CI），由经验成员展示已有进展（通过视觉定位测试点），并明确了团队分工、工具使用规范以及下周五/六的联调安排。\n\n## 总体概览\n- 会议时间：2026-05-08 上午10:03，时长约52分钟。\n- 参会人员：项目负责人（说话人2）、已有两周工作经验的成员（说话人3）、以及多位新加入成员（说话人1、4、5、6等）。\n- 核心议题：机械臂自动测试项目进展、技术方案切换、团队分工与协作流程。\n- 整体进展：传统方法已完成并通过摄像头+位号图定位测试点，目前正在切换至VLM方案；其它成员刚接触项目，处于学习阶段。\n- 后续安排：负责人强调使用AI Coding Agent、保存聊天记录、上传GitHub，并计划下周五/六进行首次联调。\n\n## 关键讨论点\n| 序号 | 议题 | 主要内容 | 相",
+                  "scope": "",
+                  "aliases": [],
+                  "evidence_refs": [
+                    {
+                      "meeting_path": "pdf-chat-summaries/KPIT会议/2026-05-08_上午10点03_原始会议转写/机械臂项目进展与分工_2026-05-08.md",
+                      "span": "## 一句话结论\n本次会议确认了机械臂项目的三个主要工作方向（大模型调度、机械臂控制、整体架构与 CI），由经验成员展示已有进展（通过视觉定位测试点），并明确了团队分工、工具使用规范以及下周五/六的联调安排。\n\n## 总体概览\n- 会议时间：2026-05-08 上午10:03，时长约52分钟。\n- 参会人员：项目负责人（说话人2）、已有两周工作经验的成员（说话人3）、以及多位新加入成员（说话人1"
+                    }
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "af7e0e2c-f53d-4974-a1eb-3bbe7570d179",
+                  "label": "资料更新讨论_2026-05-15",
+                  "level": 3,
+                  "tree": "capability",
+                  "parent_id": "e52a57f9-0f47-43f5-a9ae-c38037280b21",
+                  "status": "emerging",
+                  "confidence": 0.7,
+                  "definition": "## 一句话结论\n本次会议明确了项目核心方向：将非结构化文档（Office、PDF等）统一转换为Markdown格式，并通过大模型实现基于内容的差异更新，而非简单覆盖；同时利用GitHub Pages生成结构化的HTML展示，后续还将按主题分类会议内容并评估个人技能水平。\n\n## 总体概览\n- **背景**：项目积累了大量非结构化的文档（会议纪要、资料等），需要转化为机器和Git友好的格式，并实现增量更新。\n- **参与方**：说话人1（需求方/决策者）与说话人2（开发执行者）。\n- **主要议题**：非结构化数据转Markdown、基于大模型的差异更新、GitHub Pages生成HTML、按主题分类会议内容、技能水平评估。\n- **整体进展**：已实现上传文档自动生成Markdown和HTML，但当前是独立文件生成；下一步需解决差异更新、主题分类和Skills评估。\n\n## 关键讨论点",
+                  "scope": "",
+                  "aliases": [],
+                  "evidence_refs": [
+                    {
+                      "meeting_path": "pdf-chat-summaries/KPIT会议/2026-05-15_下午1点48_资料更新讨论/资料更新讨论_2026-05-15.md",
+                      "span": "## 一句话结论\n本次会议明确了项目核心方向：将非结构化文档（Office、PDF等）统一转换为Markdown格式，并通过大模型实现基于内容的差异更新，而非简单覆盖；同时利用GitHub Pages生成结构化的HTML展示，后续还将按主题分类会议内容并评估个人技能水平。\n\n## 总体概览\n- **背景**：项目积累了大量非结构化的文档（会议纪要、资料等），需要转化为机器和Git友好的格式，并实现"
+                    }
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "27305acc-cfe4-4ed6-971e-4b72d28b5a59",
+                  "label": "VLM与机械臂项目进展_20260512",
+                  "level": 3,
+                  "tree": "capability",
+                  "parent_id": "e52a57f9-0f47-43f5-a9ae-c38037280b21",
+                  "status": "emerging",
+                  "confidence": 0.7,
+                  "definition": "## 一句话结论\n会议继续聚焦VLM+OpenCV定位流程的理解性问题，确认为多边形组合验证方案；同时明确了机械臂控制、CI架构、夹具设计及实物调试等任务的分工与截止时间（周五前）。<span class=\"change-new\">新增：会议中新增文件识别功能汇报（支持3D模型、压缩包等），并计划本周五或周六进行首次联调。</span>\n\n## 总体概览\n- 背景：项目分为输入层、VLM处理层、机械臂执行层，当前处于流程验证与接口对齐阶段。\n- 参与方：令（VLM流程）、美颖（机械臂仿真与控制）、单紫阳（系统架构与CI）、张伟牙（夹具设计）等。\n- 主要议题：VLM定位精度与理解性问题、机械臂独立关节运动与仿真、系统架构图与CI集成、夹具规格确认、<span class=\"change-new\">新增：文件识别功能展示</span>。\n- 整体进展：VLM流程主体已跑通，但存在模型理解不稳",
+                  "scope": "",
+                  "aliases": [],
+                  "evidence_refs": [
+                    {
+                      "meeting_path": "pdf-chat-summaries/KPIT会议/2026年5月12日_下午2点会议记录/VLM与机械臂项目进展_20260512.md",
+                      "span": "## 一句话结论\n会议继续聚焦VLM+OpenCV定位流程的理解性问题，确认为多边形组合验证方案；同时明确了机械臂控制、CI架构、夹具设计及实物调试等任务的分工与截止时间（周五前）。<span class=\"change-new\">新增：会议中新增文件识别功能汇报（支持3D模型、压缩包等），并计划本周五或周六进行首次联调。</span>\n\n## 总体概览\n- 背景：项目分为输入层、VLM处理层、机"
+                    }
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "67e04fa2-7e6d-478e-abba-31654cdfd7ad",
+                  "label": "Debugging_Agent项目整体规划与阶段性落地计划",
+                  "level": 3,
+                  "tree": "capability",
+                  "parent_id": "e52a57f9-0f47-43f5-a9ae-c38037280b21",
+                  "status": "emerging",
+                  "confidence": 0.7,
+                  "definition": "## 一句话结论\n该项目整合了Debugging Agent的长期战略Roadmap与2025年5-6月首期Demo落地执行计划，核心目标是先搭建Co-pilot人机协同调试原型验证可行性，再逐步迈向多智能体协作、全流程自动化和领域知识壁垒构建。对比历史记录，内容无新增或变更。\n\n## 总体概览\n- 项目分为三个阶段：短期（5-6月Demo验证）、中期（多维多智能体协作与全流程自动化）、长期（Tokens优化+Ontology知识库构建行业壁垒）。\n- 短期目标明确：5月底完成基础技术底座搭建（VLM训练、机械臂真机控制），输出视频可演示Demo；6月底升级为现场交互式Hands-on Demo。\n- 核心拓展方向包括全维度多样性能力（六维）、端到端全流程自动化（双机械手+Agent）、Co-pilot人机协同架构升级（数据分层云端、身份与上下文迁移）。\n- 文档末尾标注“部分内容可能由A",
+                  "scope": "",
+                  "aliases": [],
+                  "evidence_refs": [
+                    {
+                      "meeting_path": "pdf-chat-summaries/KPIT会议/Debugging_Agent_项目整体规划与阶段性落地计划/Debugging_Agent项目整体规划与阶段性落地计划.md",
+                      "span": "## 一句话结论\n该项目整合了Debugging Agent的长期战略Roadmap与2025年5-6月首期Demo落地执行计划，核心目标是先搭建Co-pilot人机协同调试原型验证可行性，再逐步迈向多智能体协作、全流程自动化和领域知识壁垒构建。对比历史记录，内容无新增或变更。\n\n## 总体概览\n- 项目分为三个阶段：短期（5-6月Demo验证）、中期（多维多智能体协作与全流程自动化）、长期（To"
+                    }
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "96cc2e84-bc7e-4f2b-81be-5760aecf57cf",
+                  "label": "机械臂工作讨论_2026年5月12日",
+                  "level": 3,
+                  "tree": "capability",
+                  "parent_id": "e52a57f9-0f47-43f5-a9ae-c38037280b21",
+                  "status": "emerging",
+                  "confidence": 0.7,
+                  "definition": "## 一句话结论\n本次会议明确了机械臂及相关系统各模块的当前进展与问题，要求各成员在周五前完成接口对接、流程验证和架构图更新，并规范大模型使用记录与上传。\n\n## 总体概览\n- 会议时间：2026年5月12日 14:01-14:40 (GMT+08)，通过Teams会议号+密码或微信群链接接入，支持网页版和软件版。\n- 参与方包括多个技术角色（说话人1-7），主要议题包括VLM框选精度、系统分层接口对接、机械臂运动控制、夹具设计及后续工作安排。\n- 整体进展：仓库新功能已上线，接口层初步完成但未对接真实数据，机械臂关节运动问题已解决，夹具设计需简化。\n- 存在多个未闭环的问题：VLM理解精度不足、接口返回-1错误、架构图需每天重新生成、仿真零件松散等。\n\n## 关键讨论点\n| 序号 | 议题 | 主要内容 | 相关人员 | 结论或状态 |\n|------|------|----------",
+                  "scope": "",
+                  "aliases": [],
+                  "evidence_refs": [
+                    {
+                      "meeting_path": "pdf-chat-summaries/KPIT会议/机械臂工作讨论_2026年5月12日/机械臂工作讨论_2026年5月12日.md",
+                      "span": "## 一句话结论\n本次会议明确了机械臂及相关系统各模块的当前进展与问题，要求各成员在周五前完成接口对接、流程验证和架构图更新，并规范大模型使用记录与上传。\n\n## 总体概览\n- 会议时间：2026年5月12日 14:01-14:40 (GMT+08)，通过Teams会议号+密码或微信群链接接入，支持网页版和软件版。\n- 参与方包括多个技术角色（说话人1-7），主要议题包括VLM框选精度、系统分层接"
+                    }
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "bc8ef0a1-331f-4632-8bc7-0f065bcfb35f",
+              "label": "模型_Benchmark",
+              "level": 2,
+              "tree": "capability",
+              "parent_id": "63c1f3f0-3992-457d-b310-365571a46eba",
+              "status": "stable",
+              "confidence": 0.85,
+              "definition": "# 模型 Benchmark\n\n## 模块目标\n\n对比评估多个大模型（VLM）在测试点定位任务上的表现，包括位号图识别、实物图识别、流程遵循能力等，为模型选型提供依据。\n\n## 相关会议\n\n- 2026-05-08 上午：项目进展与分工\n- 2026-05-12 下午：机械臂工作讨论\n- 2026-05-15 上午：机械臂仿真与测试流程对接\n- 2026-05-15 下午：模型界面与精度讨论\n- 2026-05-22 上午：项目流程测试点讨论\n\n## 当前状态",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            },
+            {
+              "id": "587fa6a3-0099-4846-b681-58f736810245",
+              "label": "项目通用事项",
+              "level": 2,
+              "tree": "capability",
+              "parent_id": "63c1f3f0-3992-457d-b310-365571a46eba",
+              "status": "stable",
+              "confidence": 0.85,
+              "definition": "# 项目通用事项\n\n## 模块目标\n\n记录不归属于特定功能模块但重要的项目级事项，如工具链要求、协作规范、新方向引入等。\n\n## 相关会议\n\n- 2026-05-08 上午：项目进展与分工\n- 2026-05-08（5月8日会议内容）\n- 2026-05-15 下午：资料更新讨论\n- 2026-05-15 下午：模型界面与精度讨论\n- 2026-05-22 上午：项目流程测试点讨论\n- 2026-05-26 下午：四个Topic说明\n",
+              "scope": "",
+              "aliases": [],
+              "evidence_refs": [],
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "staging": [],
+  "meeting_sources": [
+    "pdf-chat-summaries/KPIT会议/2026-05-08_上午10点03_原始会议转写/机械臂项目进展与分工_2026-05-08.md",
+    "pdf-chat-summaries/KPIT会议/2026-05-15_上午10点02_原始会议转写/机械臂仿真与测试流程对接_20260515.md",
+    "pdf-chat-summaries/KPIT会议/2026-05-15_下午1点48_资料更新讨论/资料更新讨论_2026-05-15.md",
+    "pdf-chat-summaries/KPIT会议/2026-05-15_下午5点38_模型界面讨论/模型界面与精度讨论_20260515.md",
+    "pdf-chat-summaries/KPIT会议/2026-05-22_上午10点02_项目流程测试点讨论/项目流程测试点讨论_2026-05-22.md",
+    "pdf-chat-summaries/KPIT会议/2026-05-26_下午8点20_四个Topic说明/四个Topic说明_20260526.md",
+    "pdf-chat-summaries/KPIT会议/2026-06-02_下午3点37_通讯架构讨论/通讯架构讨论_20260602.md",
+    "pdf-chat-summaries/KPIT会议/2026年5月12日_下午2点会议记录/VLM与机械臂项目进展_20260512.md",
+    "pdf-chat-summaries/KPIT会议/Debugging_Agent_项目整体规划与阶段性落地计划/Debugging_Agent项目整体规划与阶段性落地计划.md",
+    "pdf-chat-summaries/KPIT会议/机械臂工作讨论_2026年5月12日/机械臂工作讨论_2026年5月12日.md"
+  ]
+}

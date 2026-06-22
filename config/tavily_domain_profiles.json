@@ -1,0 +1,255 @@
+{
+  "version": 1,
+  "updated_at": "2026-06-17",
+  "project": "ChattingRecordTest",
+  "global_exclude_domains": [
+    "reddit.com",
+    "quora.com",
+    "pinterest.com",
+    "facebook.com",
+    "instagram.com",
+    "tiktok.com",
+    "medium.com",
+    "linkedin.com"
+  ],
+  "global_baseline_include_domains": [
+    "github.com",
+    "docs.github.com",
+    "wikipedia.org"
+  ],
+  "topic_promote_threshold": 0.9,
+  "search_defaults": {
+    "search_depth": "advanced",
+    "chunks_per_source": 3,
+    "max_results": 10,
+    "include_raw_content": "markdown",
+    "include_answer": "advanced",
+    "min_score": 0.55,
+    "extract_min_score": 0.65,
+    "extract_top_urls": 5
+  },
+  "search_strategy": {
+    "open_queries_per_topic": 2,
+    "domain_queries_per_topic": 2,
+    "optional_news_query": true,
+    "news_time_range": "month"
+  },
+  "domain_profiles": [
+    {
+      "id": "robotics_simulation",
+      "description": "机械臂、仿真、运动控制、ROS、MuJoCo、Isaac",
+      "topic_tags": [
+        "机械臂",
+        "仿真",
+        "MuJoCo",
+        "mujoco",
+        "ROS",
+        "ros",
+        "MG400",
+        "夹具",
+        "避障",
+        "路径规划",
+        "Isaac",
+        "manipulator",
+        "teleoperation"
+      ],
+      "include_domains": [
+        "ros.org",
+        "docs.ros.org",
+        "github.com",
+        "nvidia.com",
+        "docs.omniverse.nvidia.com",
+        "mujoco.org",
+        "openrobotics.org",
+        "wiki.ros.org"
+      ]
+    },
+    {
+      "id": "vlm_perception",
+      "description": "VLM、视觉定位、测试点、PCB、位号图",
+      "topic_tags": [
+        "VLM",
+        "视觉",
+        "测试点",
+        "位号",
+        "原理图",
+        "PCB",
+        "定位",
+        "OCR",
+        "书生",
+        "grounding",
+        "detection"
+      ],
+      "include_domains": [
+        "arxiv.org",
+        "huggingface.co",
+        "paperswithcode.com",
+        "openaccess.thecvf.com",
+        "github.com",
+        "docs.ultralytics.com"
+      ]
+    },
+    {
+      "id": "embedded_hardware_test",
+      "description": "硬件测试、CAN、SerDes、相机、仪器",
+      "topic_tags": [
+        "硬件测试",
+        "CAN",
+        "SerDes",
+        "Camera",
+        "示波器",
+        "仪器",
+        "电气测试",
+        "HW Test"
+      ],
+      "include_domains": [
+        "ni.com",
+        "keysight.com",
+        "tek.com",
+        "can-cia.org",
+        "github.com",
+        "embedded.com"
+      ]
+    },
+    {
+      "id": "devops_platform",
+      "description": "GitHub CI、Pages、文档流水线、Agent Skills",
+      "topic_tags": [
+        "GitHub",
+        "CI",
+        "Actions",
+        "Pages",
+        "workflow",
+        "Markdown",
+        "HTML",
+        "Skills",
+        "ClawHub",
+        "markitdown"
+      ],
+      "include_domains": [
+        "docs.github.com",
+        "github.com",
+        "docs.npmjs.com",
+        "nodejs.org",
+        "markdown.new"
+      ]
+    },
+    {
+      "id": "llm_agents",
+      "description": "LLM 调用、Agent、Coding Agent、Prompt",
+      "topic_tags": [
+        "LLM",
+        "Agent",
+        "Codex",
+        "Cursor",
+        "Claude",
+        "DeepSeek",
+        "OpenAI",
+        "prompt",
+        "EEA",
+        "Debug Agent"
+      ],
+      "include_domains": [
+        "platform.openai.com",
+        "docs.anthropic.com",
+        "api-docs.deepseek.com",
+        "huggingface.co",
+        "github.com",
+        "arxiv.org"
+      ]
+    },
+    {
+      "id": "benchmark_evaluation",
+      "description": "模型 Benchmark、评测指标、数据集",
+      "topic_tags": [
+        "Benchmark",
+        "MMMU",
+        "评测",
+        "指标",
+        "数据集",
+        "baseline",
+        "评分"
+      ],
+      "include_domains": [
+        "paperswithcode.com",
+        "arxiv.org",
+        "huggingface.co",
+        "github.com",
+        "openml.org"
+      ]
+    },
+    {
+      "id": "communication_architecture",
+      "description": "通讯架构、中间件、进程间通信、以太网",
+      "topic_tags": [
+        "通讯",
+        "架构",
+        "TCP",
+        "HTTP",
+        "以太网",
+        "中间件",
+        "IPC",
+        "DDS",
+        "RPC"
+      ],
+      "include_domains": [
+        "ros.org",
+        "github.com",
+        "microservices.io",
+        "docs.ros.org",
+        "opendds.org"
+      ]
+    },
+    {
+      "id": "project_management",
+      "description": "项目管理、里程碑、风险、RACI、敏捷",
+      "topic_tags": [
+        "里程碑",
+        "风险",
+        "RACI",
+        "待办",
+        "进度",
+        "范围",
+        "质量",
+        "成本",
+        "干系人",
+        "变更",
+        "demo路线图",
+        "路线图"
+      ],
+      "include_domains": [
+        "pmi.org",
+        "atlassian.com",
+        "scrum.org",
+        "agilealliance.org",
+        "projectmanagement.com"
+      ]
+    }
+  ],
+  "pm_dimension_domains": {
+    "scope": {
+      "include_domains": ["pmi.org", "atlassian.com"]
+    },
+    "schedule": {
+      "include_domains": ["pmi.org", "scrum.org"]
+    },
+    "resource_cost": {
+      "include_domains": ["pmi.org", "cloud.google.com"]
+    },
+    "quality": {
+      "include_domains": ["iso.org", "ieee.org", "arxiv.org"]
+    },
+    "risk_issues": {
+      "include_domains": ["pmi.org", "owasp.org"]
+    },
+    "stakeholders": {
+      "include_domains": ["pmi.org", "atlassian.com"]
+    },
+    "communications": {
+      "include_domains": ["docs.github.com", "atlassian.com"]
+    },
+    "change_decisions": {
+      "include_domains": ["pmi.org", "cio.com"]
+    }
+  }
+}

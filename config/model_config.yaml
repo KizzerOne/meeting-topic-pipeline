@@ -1,0 +1,102 @@
+version: 1
+updated_at: 2026-05-12
+project: ChattingRecordTest
+
+models:
+  - name: deepseek-v4-flash
+    provider: DeepSeek
+    interface: OpenAI-compatible Chat Completions API
+    base_url: https://api.deepseek.com
+    usage:
+      - document summarization
+      - meeting-note summarization
+      - chat-log structured summary
+      - archive filename generation
+    configured_by:
+      env:
+        - OPENAI_API_KEY
+        - OPENAI_BASE_URL
+        - OPENAI_MODEL
+      default_model_env: OPENAI_MODEL
+    date: 2026-05-12
+    reason: Default text model for Chinese document summaries, chosen for OpenAI-compatible API support, cost, and CI integration.
+    status: active
+
+  - name: OPENAI_VISION_MODEL
+    provider: OpenAI-compatible provider
+    interface: OpenAI-compatible vision Chat Completions API
+    base_url_env: OPENAI_VISION_BASE_URL
+    usage:
+      - image understanding
+      - engineering screenshot understanding
+    configured_by:
+      env:
+        - OPENAI_VISION_API_KEY
+        - OPENAI_VISION_BASE_URL
+        - OPENAI_VISION_MODEL
+    date: 2026-05-12
+    reason: Reserved for image understanding. Current workflow treats non-document deliverables as archives only and does not run AI summaries on them by default.
+    status: optional
+
+model_switches:
+  - date: 2026-05-12
+    from: direct text extraction only
+    to: ClawHub Markdown Converter plus local markitdown fallback
+    reason: Improve document extraction quality while keeping a local fallback when the external converter is unavailable.
+    note: ClawHub Markdown Converter and markitdown are document extraction services, not large-language-model inference services.
+
+  - date: 2026-05-12
+    from: AI summary for all supported inputs
+    to: AI summary for document inputs only
+    reason: Images and 3D/CAD files are non-document deliverables. The workflow now records their type and archive location without spending model calls on summaries.
+
+external_services:
+  - name: ClawHub Markdown Converter
+    provider: ClawHub
+    endpoint_env: CLAWHUB_MARKDOWN_URL
+    default_endpoint: https://markdown.new/convert
+    usage:
+      - document-to-markdown conversion
+      - CI document extraction preprocessing
+    fallback:
+      - markitdown
+      - pdf-parse
+      - OCR
+    date: 2026-05-12
+
+  - name: Optional Markdown-to-HTML converter
+    provider: ClawHub-compatible service
+    endpoint_env: CLAWHUB_HTML_URL
+    usage:
+      - markdown summary to HTML conversion
+    fallback:
+      - built-in HTML template
+    date: 2026-05-12
+    status: optional
+
+  - name: Tavily Search and Extract
+    provider: Tavily
+    endpoint: https://api.tavily.com
+    api_key_env: TAVILY_API_KEY
+    config_file: config/tavily_domain_profiles.json
+    usage:
+      - Topic external-knowledge expansion
+      - include_domains domain-qualified search
+      - dual-track open + authoritative domain queries
+      - URL extract for full-page markdown
+    search_defaults:
+      search_depth: advanced
+      chunks_per_source: 3
+      max_results: 10
+      include_raw_content: markdown
+    domain_profiles:
+      - robotics_simulation
+      - vlm_perception
+      - embedded_hardware_test
+      - devops_platform
+      - llm_agents
+      - benchmark_evaluation
+      - communication_architecture
+      - project_management
+    date: 2026-06-17
+    status: active

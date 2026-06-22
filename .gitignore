@@ -1,0 +1,19 @@
+node_modules/
+.env
+.env.*
+!.env.example
+outputs/
+archive/
+
+# Generated / bulky artifacts (regenerate via CI or npm scripts)
+**/chat-summary-*
+**/*.metadata.json
+docs/
+pdf-chat-summaries/*
+!pdf-chat-summaries/.gitkeep
+input-files/*
+!input-files/.gitkeep
+
+npm-debug.log*
+.DS_Store
+*.log

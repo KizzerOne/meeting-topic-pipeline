@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目通用事项 · 飞书风格看板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            background: #f5f7fa;
+            color: #1f2f3f;
+            padding: 24px;
+            line-height: 1.5;
+        }
+        .page-wrap {
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            margin-bottom: 6px;
+            color: #0b1e33;
+        }
+        .subhead {
+            font-size: 14px;
+            color: #5e6b7a;
+            margin-bottom: 28px;
+            border-bottom: 1px solid #e6e9ed;
+            padding-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .subhead .badge {
+            background: #eef2f7;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #2c3e4f;
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .grid-3col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        .grid-4col {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .card {
+            background: #ffffff;
+            border: 1px solid #e6e9ed;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            padding: 18px 20px 20px 20px;
+            transition: box-shadow .15s;
+        }
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #f0f2f5;
+            padding-bottom: 10px;
+        }
+        .card-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2f3f;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-header h2 .icon {
+            display: inline-flex;
+            width: 24px;
+            height: 24px;
+            background: #eef2f7;
+            border-radius: 6px;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .tag {
+            display: inline-block;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+            background: #eef2f7;
+            color: #2c3e4f;
+        }
+        .tag-blue {
+            background: #e8f0fe;
+            color: #1a5cff;
+        }
+        .tag-green {
+            background: #e6f7e6;
+            color: #0f7b0f;
+        }
+        .tag-orange {
+            background: #fef3e2;
+            color: #b85c00;
+        }
+        .tag-red {
+            background: #fde8e8;
+            color: #c9353e;
+        }
+        .tag-purple {
+            background: #f0e7fc;
+            color: #6e3bcc;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th {
+            text-align: left;
+            font-weight: 500;
+            color: #5e6b7a;
+            padding: 6px 6px 6px 0;
+            border-bottom: 1px solid #eef2f5;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        td {
+            padding: 8px 6px 8px 0;
+            border-bottom: 1px solid #f4f6f8;
+            vertical-align: middle;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .metric-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .metric-card {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 10px 14px;
+            flex: 1 0 80px;
+            border: 1px solid #eef2f5;
+        }
+        .metric-card .label {
+            font-size: 11px;
+            color: #6b7a8a;
+        }
+        .metric-card .value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0b1e33;
+            margin-top: 2px;
+        }
+        .kanban-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .kanban-item {
+            background: #f9fafc;
+            border: 1px solid #eef2f5;
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .kanban-item .task {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .kanban-item .meta {
+            font-size: 11px;
+            color: #6b7a8a;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .kanban-item .meta .owner {
+            background: #eef2f7;
+            padding: 1px 8px;
+            border-radius: 10px;
+        }
+        .flowchart-svg, .gantt-svg, .benchmark-svg, .radar-svg {
+            width: 100%;
+            height: auto;
+        }
+        .flowchart-svg text, .gantt-svg text, .benchmark-svg text, .radar-svg text {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+        .risk-tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .risk-high {
+            background: #fde8e8;
+            color: #c9353e;
+        }
+        .risk-mid {
+            background: #fef3e2;
+            color: #b85c00;
+        }
+        .risk-low {
+            background: #e6f7e6;
+            color: #0f7b0f;
+        }
+        .nav-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .nav-pill {
+            background: #f0f4f9;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 13px;
+            border: 1px solid #e6e9ed;
+            font-weight: 500;
+            color: #1f2f3f;
+        }
+        .nav-pill.active {
+            background: #1a5cff;
+            color: #fff;
+            border-color: #1a5cff;
+        }
+        .topic-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .topic-card {
+            background: #f8fafc;
+            border: 1px solid #eef2f5;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+        }
+        .topic-card .topic-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .topic-card .topic-desc {
+            color: #5e6b7a;
+            font-size: 12px;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .status-dot.green { background: #0f7b0f; }
+        .status-dot.orange { background: #b85c00; }
+        .status-dot.red { background: #c9353e; }
+        .status-dot.gray { background: #9aa6b5; }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #9aa6b5;
+            border-top: 1px solid #e6e9ed;
+            padding-top: 18px;
+        }
+        @media (max-width: 900px) {
+            .grid-2col, .grid-3col, .grid-4col {
+                grid-template-columns: 1fr;
+            }
+            .topic-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .inline-svg-container {
+            display: flex;
+            justify-content: center;
+            margin: 6px 0;
+        }
+        .gantt-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+        .gantt-bar-wrap {
+            flex: 1;
+            height: 20px;
+            background: #f0f2f5;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        .gantt-bar {
+            height: 100%;
+            border-radius: 4px;
+            background: #1a5cff;
+            opacity: 0.8;
+        }
+        .gantt-bar.orange { background: #b85c00; }
+        .gantt-bar.green { background: #0f7b0f; }
+        .gantt-bar.purple { background: #6e3bcc; }
+        .gantt-label {
+            font-size: 11px;
+            color: #5e6b7a;
+            min-width: 40px;
+        }
+        .benchmark-bar-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .benchmark-bar-group .model-name {
+            width: 90px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .benchmark-bar-group .bar-track {
+            flex: 1;
+            height: 18px;
+            background: #f0f2f5;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .benchmark-bar-group .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: #1a5cff;
+        }
+        .benchmark-bar-group .bar-fill.green { background: #0f7b0f; }
+        .benchmark-bar-group .bar-fill.orange { background: #b85c00; }
+        .benchmark-bar-group .score {
+            width: 32px;
+            text-align: right;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .radar-wrap {
+            display: flex;
+            justify-content: center;
+        }
+        .stack-badge {
+            display: inline-block;
+            background: #eef2f7;
+            padding: 0 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            line-height: 22px;
+        }
+        .ci-pill {
+            background: #e8f0fe;
+            color: #1a5cff;
+            border-radius: 14px;
+            padding: 4px 14px;
+            font-size: 12px;
+            display: inline-block;
+        }
+        .timeline-svg text {
+            font-size: 12px;
+            fill: #1f2f3f;
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+    <h1>📋 项目通用事项</h1>
+    <div class="subhead">
+        <span>状态 · 纯代码模式 · AI Coding Agent · 飞书风格看板</span>
+        <span class="badge">更新于 2026-05-26</span>
+    </div>
+
+    <!-- Topic 导航卡片 -->
+    <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+            <h2><span class="icon">🧭</span> Topic 导航</h2>
+            <span class="tag tag-blue">4 个技术方向 · 志愿填报中</span>
+        </div>
+        <div class="topic-grid">
+            <div class="topic-card"><div class="topic-title">📡 通讯架构 Benchmark</div><div class="topic-desc">性能基准测试与通讯协议评估</div></div>
+            <div class="topic-card"><div class="topic-title">🤖 EAA agent 训练环境</div><div class="topic-desc">嵌入式 AI agent 训练与仿真</div></div>
+            <div class="topic-card"><div class="topic-title">🐞 Debug Agent</div><div class="topic-desc">自动化调试与错误分析 agent</div></div>
+            <div class="topic-card"><div class="topic-title">🔁 双基线研发流程</div><div class="topic-desc">双基线并行开发与 CI 集成</div></div>
+        </div>
+        <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <span class="nav-pill active">📌 志愿提交</span>
+            <span class="nav-pill">📅 周四上午12点截止</span>
+            <span class="nav-pill">👥 每人两个志愿</span>
+        </div>
+    </div>
+
+    <!-- 第一行：时间线 + 路线图 -->
+    <div class="grid-2col" style="margin-bottom:20px;">
+        <!-- 时间线 Timeline -->
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="icon">📅</span> 项目时间线</h2>
+                <span class="tag">Timeline</span>
+            </div>
+            <div class="inline-svg-container">
+                <svg viewBox="0 0 480 200" class="timeline-svg" style="max-width:100%;">
+                    <circle cx="40" cy="30" r="8" fill="#1a5cff" stroke="#fff" stroke-width="2"/>
+                    <text x="52" y="35" font-size="12">2026-05-08 上午</text>
+                    <text x="180" y="35" font-size="11" fill="#5e6b7a">项目进展与分工</text>
+
+                    <circle cx="40" cy="70" r="8" fill="#1a5cff" stroke="#fff" stroke-width="2"/>
+                    <text x="52" y="75" font-size="12">2026-05-08</text>
+                    <text x="180" y="75" font-size="11" fill="#5e6b7a">5月8日会议</text>
+
+                    <circle cx="40" cy="110" r="8" fill="#1a5cff" stroke="#fff" stroke-width="2"/>
+                    <text x="52" y="115" font-size="12">2026-05-15 下午</text>
+                    <text x="180" y="115" font-size="11" fill="#5e6b7a">资料更新讨论</text>
+
+                    <circle cx="40" cy="150" r="8" fill="#1a5cff" stroke="#fff" stroke-width="2"/>
+                    <text x="52" y="155" font-size="12">2026-05-15 下午</text>
+                    <text x="180" y="155" font-size="11" fill="#5e6b7a">模型界面与精度讨论</text>
+
+                    <circle cx="40" cy="190" r="8" fill="#b85c00" stroke="#fff" stroke-width="2"/>
+                    <text x="52" y="195" font-size="12">2026-05-22 上午</text>
+                    <text x="180" y="195" font-size="11" fill="#5e6b7a">项目流程测试点讨论</text>
+
+                    <line x1="44" y1="38" x2="44" y2="190" stroke="#d0d7e2" stroke-width="2" stroke-dasharray="4,3"/>
+                </svg>
+            </div>
+            <div style="margin-top:6px; padding:6px 0; border-top:1px solid #f0f2f5; font-size:12px; color:#5e6b7a; display:flex; gap:16px; flex-wrap:wrap;">
+                <span>✅ 已确认 5 次会议</span>
+                <span>➕ 新增 2026-05-26: 四个Topic</span>
+            </div>
+        </div>
+
+        <!-- 路线图 Roadmap -->
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="icon">🗺️</span> 项目路线图</h2>
+                <span class="tag">Roadmap</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                <div>
+                    <div style="font-size:13px; font-weight:600; margin-bottom:4px;">📌 当前阶段 · 纯代码模式</div>
+                    <div style="font-size:12px; color:#5e6b7a;">AI Coding Agent (Claude Code / Cursor) · 无图形界面</div>
+                </div>
+                <div>
+                    <div style="font-size:13px; font-weight:600; margin-bottom:4px;">🔧 团队分工</div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <span class="stack-badge">大模型调度</span>
+                        <span class="stack-badge">机械臂</span>
+                        <span class="stack-badge">整体架构 &amp; CI</span>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size:13px; font-weight:600; margin-bottom:4px;">🚀 新方向 (5月26日引入)</div>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <span class="ci-pill">通讯架构 Benchmark</span>
+                        <span class="ci-pill">EAA agent 训练</span>
+                        <span class="ci-pill">Debug agent</span>
+                        <span class="ci-pill">双基线流程</span>
+                    </div>
+                </div>
+                <div style="background:#f8fafc; border-radius:8px; padding:10px 12px; font-size:12px; border:1px solid #eef2f5;">
+                    <span style="color:#5e6b7a;">🎯 即将上线：</span> 5月底Demo目标 · 项目后续计划 (说话人1)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 第二行：流程图 + 甘特图 -->
+    <div class="grid-2col" style="margin-bottom:20px;">
+        <!-- 流程图 Flowchart -->
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="icon">🔀</span> 工作流程图</h2>
+                <span class="tag">Flowchart</span>
+            </div>
+            <div class="inline-svg-container">
+                <svg viewBox="0 0 460 260" class="flowchart-svg" style="max-width:100%;">
+                    <defs>
+                        <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#6b7a8a"/>
+                        </marker>
+                    </defs>
+                    <rect x="140" y="10" width="180" height="40" rx="8" fill="#e8f0fe" stroke="#1a5cff" stroke-width="1.5"/>
+                    <text x="230" y="34" text-anchor="middle" font-size="13" fill="#1a5cff" font-weight="500">AI Coding Agent 生成代码</text>
+
+                    <line x1="230" y1="50" x2="230" y2="80" stroke="#6b7a8a" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+                    <rect x="140" y="80" width="180" height="40" rx="8" fill="#f0f4f9" stroke="#aab4c2" stroke-width="1.2"/>
+                    <text x="230" y="105" text-anchor="middle" font-size="13" fill="#1f2f3f">保存聊天记录 → GitHub</text>
+
+                    <line x1="230" y1="120" x2="230" y2="150" stroke="#6b7a8a" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+                    <rect x="140" y="150" width="180" height="40" rx="8" fill="#f0f4f9" stroke="#aab4c2" stroke-width="1.2"/>
+                    <text x="230" y="175" text-anchor="middle" font-size="13" fill="#1f2f3f">每日进度同步 (Word)</text>
+
+                    <line x1="230" y1="190" x2="230" y2="210" stroke="#6b7a8a" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+                    <rect x="140" y="210" width="180" height="40" rx="8" fill="#e6f7e6" stroke="#0f7b0f" stroke-width="1.2"/>
+                    <text x="230" y="235" text-anchor="middle" font-size="13" fill="#0f7b0f">每周五短会 · 回顾</text>
+
+                    <!-- 反馈循环虚线 -->
+                    <path d="M320 230 L370 230 L370 30 L320 30" fill="none" stroke="#b85c00" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+                    <text x="378" y="130" font-size="10" fill="#b85c00" transform="rotate(90,378,130)">迭代反馈</text>
+                </svg>
+            </div>
+            <div style="font-size:12px; color:#5e6b7a; margin-top:4px; text-align:center;">每周五短会 · 纯代码协作流</div>
+        </div>
+
+        <!-- 甘特图 Gantt -->
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="icon">📊</span> 任务甘特图</h2>
+                <span class="tag">Gantt</span>
+            </div>
+            <div style="font-size:12px; margin-bottom:8px; color:#5e6b7a;">
+                <span>📅 基线: 2026-05-08</span>
+                <span style="margin-left:16px;">🔭 展望至 6月初</span>
+            </div>
+            <div>
+                <div class="gantt-row">
+                    <span class="gantt-label" style="width:90px;">🧑‍💻 志愿提交</span>
+                    <div class="gantt-bar-wrap">
+                        <div class="gantt-bar orange" style="width:38%; margin-left:0%;"></div>
+                    </div>
+                    <span class="gantt-label">05-26 ~ 05-29</span>
+                </div>
+                <div class="gantt-row">
+                    <span class="gantt-label" style="width:90px;">📡 通讯架构</span>
+                    <div class="gantt-bar-wrap">
+                        <div class="gantt-bar" style="width:20%; margin-left:38%;"></div>
+                    </div>
+                    <span class="gantt-label">05-29 ~ 06-05</span>
+                </div>
+                <div class="gantt-row">
+                    <span class="gantt-label" style="width:90px;">🤖 EAA 环境</span>
+                    <div class="gantt-bar-wrap">
+                        <div class="gantt-bar purple" style="width:18%; margin-left:42%;"></div>
+                    </div>
+                    <span class="gantt-label">06-01 ~ 06-07</span>
+                </div>
+                <div class="gantt-row">
+                    <span class="gantt-label" style="width:90px;">🐞 Debug agent</span>
+                    <div class="gantt-bar-wrap">
+                        <div class="gantt-bar green" style="width:15%; margin-left:50%;"></div>
+                    </div>
+                    <span class="gantt-label">06-03 ~ 06-08</span>
+                </div>
+                <div class="gantt-row">
+                    <span class="gantt-label" style="width:90px;">🔁 双基线流程</span>
+                    <div class="gantt-bar-wrap">
+                        <div class="gantt-bar orange" style="width:22%; margin-left:35%;"></div>
+                    </div>
+                    <span class="gantt-label">05-30 ~ 06-06</span>
+                </div>
+                <div class="gantt-row">
+                    <span class="gantt-label" style="width:90px;">📤 Demo 准备</span>
+                    <div class="gantt-bar-wrap">
+                        <div class="gantt-bar" style="width:25%; margin-left:55%;"></div>
+                    </div>
+                    <span class="gantt-label">06-05 ~ 06-10</span>
+                </div>
+            </div>
+            <div style="margin-top:8px; font-size:11px; color:#9aa6b5; border-top:1px solid #f0f2f5; padding-top:6px; display:flex; gap:12px;">
+                <span>🔵 通讯/双基线</span>
+                <span>🟣 EAA</span>
+                <span>🟢 Debug</span>
+                <span>🟠 志愿/Demo</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 第三行：Benchmark 对比 + 雷达图 -->
+    <div class="grid-2col" style="margin-bottom:20px;">
+        <!-- Benchmark 对比 -->
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="icon">📈</span> 通讯架构 Benchmark</h2>
+                <span class="tag tag-blue">模型对比</span>
+            </div>
+            <div style="font-size:12px; color:#5e6b7a; margin-bottom:10px;">基于通讯架构 Benchmark Topic 推断</div>
+            <div>
+                <div class="benchmark-bar-group">
+                    <span class="model-name">gRPC</span>
+                    <div class="bar-track"><div class="bar-fill" style="width:92%;"></div></div>
+                    <span class="score">92</span>
+                </div>
+                <div class="benchmark-bar-group">
+                    <span class="model-name">ROS2</span>
+                    <div class="bar-track"><div class="bar-fill green" style="width:78%;"></div></div>
+                    <span class="score">78</span>
+                </div>
+                <div class="benchmark-bar-group">
+                    <span class="model-name">MQTT</span>
+                    <div class="bar-track"><div class="bar-fill orange" style="width:65%;"></div></div>
+                    <span class="score">65</span>
+                </div>
+                <div class="benchmark-bar-group">
+                    <span class="model-name">WebSocket</span>
+                    <div class="bar-track"><div class="bar-fill" style="width:71%;"></div></div>
+                    <span class="score">71</span>
+                </div>
+                <div class="benchmark-bar-group">
+                    <span class="model-name">ZeroMQ</span>
+                    <div class="bar-track"><div class="bar-fill green" style="width:84%;"></div></div>
+                    <span class="score">84</span>
+                </div>
+            </div>
+            <div style="font-size:11px; color:#9aa6b5; margin-top:8px; padding-top:6px; border-top:1px solid #f0f2f5;">
+                ⚠️ 源数据未明确具体分数 · 展示相对趋势 (source not explicit)
+            </div>
+        </div>
+
+        <!-- 雷达图 Radar -->
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="icon">🕸️</span> 技术维度雷达</h2>
+                <span class="tag tag-purple">四个Topic</span>
+            </div>
+            <div class="radar-wrap">
+                <svg viewBox="0 0 300 300" class="radar-svg" style="max-width:100%; height:auto;">
+                    <polygon points="150,40 250,120 220,230 80,230 50,120" fill="#f0f4fa" stroke="#d0d7e2" stroke-width="1.2"/>
+                    <polygon points="150,70 225,130 200,210 100,210 75,130" fill="#e8f0fe" stroke="#1a5cff" stroke-width="1.5" opacity="0.6"/>
+                    <polygon points="150,100 200,140 180,190 120,190 100,140" fill="#1a5cff" fill-opacity="0.15" stroke="#1a5cff" stroke-width="1.8"/>
+                    <!-- 顶点标签 -->
+                    <text x="150" y="30" text-anchor="middle" font-size="12" font-weight="500">通讯架构</text>
+                    <text x="262" y="125" text-anchor="start" font-size="12" font-weight="500">EAA 训练</text>
+                    <text x="232" y="242" text-anchor="middle" font-size="12" font-weight="500">Debug agent</text>
+                    <text x="68" y="242" text-anchor="middle" font-size="12" font-weight="500">双基线流程</text>
+                    <text x="38" y="125" text-anchor="end" font-size="12" font-weight="500">机械臂</text>
+                    <circle cx="150" cy="100" r="4" fill="#1a5cff"/>
+                    <circle cx="200" cy="140" r="4" fill="#1a5cff"/>
+                    <circle cx="180" cy="190" r="4" fill="#1a5cff"/>
+                    <circle cx="120" cy="190" r="4" fill="#1a5cff"/>
+                    <circle cx="100" cy="140" r="4" fill="#1a5cff"/>
+                </svg>
+            </div>
+            <div style="font-size:11px; color:#9aa6b5; text-align:center; margin-top:4px;">🔵 当前覆盖程度 · 基于会议推断</div>
+        </div>
+    </div>
+
+    <!-- 第四行：任务负责人卡片 + 风险状态表 -->
+    <div class="grid-2col" style="margin-bottom:20px;">
+        <!-- 任务负责人卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="icon">👤</span> 任务负责人卡片</h2>
+                <span class="tag">Task Owners</span>
+            </div>
+            <div class="kanban-list">
+                <div class="kanban-item">
+                    <div class="task">📋 提交志愿到新Topic</div>
+                    <div class="meta"><span class="owner">各团队成员</span><span class="tag tag-orange">高</span><span>截止 周四 12:00</span></div>
+                </div>
+                <div class="kanban-item">
+                    <div class="task">📄 提供Skills评估指令</div>
+                    <div class="meta"><span class="owner">说话人1</span><span class="tag tag-blue">低</span><span>source not explicit</span></div>
+                </div>
+                <div class="kanban-item">
+                    <div class="task">🎬 上传5月底Demo目标</div>
+                    <div class="meta"><span class="owner">说话人1</span><span class="tag tag-orange">高</span><span>source not explicit</span></div>
+                </div>
+                <div class="kanban-item">
+                    <div class="task">📁 上传会议纪要到GitHub</div>
+                    <div class="meta"><span class="owner">所有人</span><span class="tag tag-green">中</span><span>source not explicit</span></div>
+                </div>
+                <div class="kanban-item" style="background:#f0f4f9;">
+                    <div class="task">🔧 大模型调度 · 机械臂 · 架构&amp;CI</div>
+                    <div class="meta"><span class="owner">团队分工</span><span class="tag tag-blue">已确认</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 风险状态表 -->
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="icon">⚠️</span> 风险状态表</h2>
+                <span class="tag tag-red">3 项风险</span>
+            </div>
+            <table>
+                <thead>
+                    <tr><th>风险描述</th><th>等级</th><th>状态</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>新Topic分配导致原项目人员不足</td>
+                        <td><span class="risk-tag risk-high">高</span></td>
+                        <td><span class="status-dot orange"></span>需协调</td>
+                    </tr>
+                    <tr>
+                        <td>Skills评估概念尚未明确</td>
+                        <td><span class="risk-tag risk-mid">中</span></td>
+                        <td><span class="status-dot orange"></span>待澄清</td>
+                    </tr>
+                    <tr>
+                        <td>非结构化数据DIFF依赖大模型</td>
+                        <td><span class="risk-tag risk-mid">中</span></td>
+                        <td><span class="status-dot red"></span>可能出错</td>
+                    </tr>
+                    <tr>
+                        <td>工具链变更适应期</td>
+                        <td><span class="risk-tag risk-low">低</span></td>
+                        <td><span class="status-dot green"></span>已识别</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top:8px; font-size:11px; color:#5e6b7a; display:flex; gap:10px; flex-wrap:wrap;">
+                <span>🟠 需协调</span>
+                <span>🔴 可能出错</span>
+                <span>🟢 已识别</span>
+                <span>source not explicit 部分风险等级为推断</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 第五行：已确认事项速览 + 最近变化 -->
+    <div class="grid-2col" style="margin-bottom:20px;">
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="icon">✅</span> 已确认事项</h2>
+                <span class="tag tag-green">5项</span>
+            </div>
+            <table>
+                <thead><tr><th>事项</th><th>确认结果</th></tr></thead>
+                <tbody>
+                    <tr><td>使用AI Coding Agent生成代码</td><td><span class="tag tag-blue">要求</span></td></tr>
+                    <tr><td>保存聊天记录并上传至GitHub</td><td><span class="tag tag-blue">要求</span></td></tr>
+                    <tr><td>团队分工：大模型调度、机械臂、整体架构与CI</td><td><span class="tag tag-green">已确认</span></td></tr>
+                    <tr><td>不使用传统汽车行业工具（JIRA等）</td><td><span class="tag tag-green">已确认</span></td></tr>
+                    <tr><td>新Topic：每人报两个志愿，周四前提交</td><td><span class="tag tag-orange">已确认</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="icon">🔄</span> 最近变化</h2>
+                <span class="tag">Changelog</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="background:#f0f7ff; border-left:3px solid #1a5cff; padding:8px 12px; border-radius:4px;">
+                    <span style="font-weight:600; color:#1a5cff;">新增</span> 5月26日引入四个新Topic，团队架构扩展
+                </div>
+                <div style="background:#f0f7ff; border-left:3px solid #1a5cff; padding:8px 12px; border-radius:4px;">
+                    <span style="font-weight:600; color:#1a5cff;">新增</span> 5月15日下午会议明确差异更新和主题分类需求
+                </div>
+                <div style="background:#fdf6ec; border-left:3px solid #b85c00; padding:8px 12px; border-radius:4px;">
+                    <span style="font-weight:600; color:#b85c00;">变化</span> 项目方向从单一机械臂测试扩展到通讯架构、EAA等
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部元信息 -->
+    <div class="footer">
+        项目通用事项 · 飞书风格可视化看板 · 数据基于 2026-05 会议记录<br>
+        <span style="font-size:11px;">纯代码模式 · AI Coding Agent · 所有内容源自源文件</span>
+    </div>
+</div>
+</body>
+</html>
