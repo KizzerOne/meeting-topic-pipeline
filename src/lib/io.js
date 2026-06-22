@@ -117,7 +117,9 @@ export async function buildKpitComparisonContext(inputPath, outputDir) {
   const existingMarkdownFiles = await listMarkdownFiles(outputDir);
   const historicalSummaries = [];
   for (const filePath of existingMarkdownFiles) {
-    if (path.basename(filePath).startsWith(options.summaryName)) continue;
+    const base = path.basename(filePath);
+    if (base.startsWith(options.summaryName) || base === 'topic_candidates.json') continue;
+    if (base !== 'summary.md' && base.endsWith('.md') && existingMarkdownFiles.some((p) => path.basename(p) === 'summary.md')) continue;
     const markdown = await fs.readFile(filePath, 'utf8').catch(() => '');
     if (!markdown.trim()) continue;
     historicalSummaries.push([

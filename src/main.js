@@ -16,7 +16,21 @@ import { writeGeneratedHtml } from './lib/html.js';
 import { writeSkillsHtmlSite } from './lib/skills.js';
 import { publishDocsSite } from './lib/publish.js';
 import { updateMeetingKnowledge } from './meeting-knowledge.js';
+import { writeTopicSidecar } from './lib/sidecar.js';
+import { CANONICAL_SUMMARY_BASE } from './constants.js';
 import { outputFolderForInput, replaceExtension, uniqueFileBaseName } from './lib/paths.js';
+
+function resolveOutputBaseName(generated, inputPath, usedBaseNames, workItemCount) {
+  if (options.outputByInputName) {
+    if (workItemCount === 1) {
+      usedBaseNames.add(CANONICAL_SUMMARY_BASE.toLowerCase());
+      return CANONICAL_SUMMARY_BASE;
+    }
+    const stem = path.basename(inputPath, path.extname(inputPath));
+    return uniqueFileBaseName(stem, inputPath, usedBaseNames);
+  }
+  return uniqueFileBaseName(generated.fileName, inputPath, usedBaseNames);
+}
 
 async function runExternalKnowledgeExpand() {
   const { spawn } = await import('node:child_process');
@@ -172,12 +186,17 @@ export async function main() {
       const viewerHtml = await writeModelViewerIfNeeded(inputPath, archivedOriginal, outputDir);
       const comparisonContext = await buildKpitComparisonContext(inputPath, outputDir);
       const generated = await summarizeInput({ text: client, vision: visionClient }, inputContent, options, inputPath, archivedOriginal, viewerHtml, comparisonContext);
-      const baseName = uniqueFileBaseName(generated.fileName, inputPath, usedBaseNames);
+      const baseName = resolveOutputBaseName(generated, inputPath, usedBaseNames, workItems.length);
       const markdownPath = path.join(outputDir, `${baseName}.md`);
       const htmlSummaryPath = path.join(outputDir, `${baseName}.html`);
 
       await fs.writeFile(markdownPath, generated.summary, 'utf8');
       await writeGeneratedHtml(htmlSummaryPath, generated.htmlContent, `${baseName} Summary`, generated.summary, markdownPath);
+      await writeTopicSidecar(outputDir, {
+        sourceInput: path.relative(projectRoot, inputPath),
+        suggestedTitle: generated.fileName,
+        summaryMarkdownPath: markdownPath
+      });
 
       results.push({
         input: inputPath,

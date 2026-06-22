@@ -30,6 +30,12 @@ export const supportedExtensions = new Set([
 
 export const clawhubMarkdownMaxBytes = 9.5 * 1024 * 1024;
 
+/** Fixed basename when --output-by-input-name is used (CI default path). */
+export const CANONICAL_SUMMARY_BASE = 'summary';
+
+/** Sidecar filename for topic hints and suggested titles (replaces legacy *.metadata.json). */
+export const TOPIC_SIDECAR_NAME = 'topic_candidates.json';
+
 /** @deprecated Fallback when ontology.json is missing; prefer topic-ontology/ontology.json. */
 export const kpitMeetingTopics = [
   { name: '机械臂控制', scope: '真实机械臂接口、坐标格式、夹具、误差、移动策略' },

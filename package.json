@@ -6,12 +6,13 @@
   "description": "Generate Chinese summaries from PDF chat logs and publish results with GitHub Actions.",
   "scripts": {
     "start": "node ./src/index.js",
-    "check": "node --check ./src/index.js && node --check ./src/cli.js && node --check ./src/context.js && node --check ./src/main.js && node --check ./src/meeting-knowledge.js && node --check ./src/tavily-domains.js && node --check ./src/tavily-search.js && node --check ./src/constants.js && node --check ./src/lib/process.js && node --check ./src/lib/paths.js && node --check ./src/lib/io.js && node --check ./src/lib/extract.js && node --check ./src/lib/text.js && node --check ./src/lib/summarize.js && node --check ./src/lib/html.js && node --check ./src/lib/skills.js && node --check ./src/lib/publish.js && node --check ./src/lib/archive.js && node --check ./src/lib/ontology.js && node --check ./scripts/expand-topic-knowledge.js && node --check ./scripts/evolve-topic-ontology.js",
+    "check": "node --check ./src/index.js && node --check ./src/cli.js && node --check ./src/context.js && node --check ./src/main.js && node --check ./src/meeting-knowledge.js && node --check ./src/tavily-domains.js && node --check ./src/tavily-search.js && node --check ./src/constants.js && node --check ./src/lib/process.js && node --check ./src/lib/paths.js && node --check ./src/lib/io.js && node --check ./src/lib/extract.js && node --check ./src/lib/text.js && node --check ./src/lib/summarize.js && node --check ./src/lib/html.js && node --check ./src/lib/skills.js && node --check ./src/lib/publish.js && node --check ./src/lib/archive.js && node --check ./src/lib/ontology.js && node --check ./src/lib/sidecar.js && node --check ./scripts/expand-topic-knowledge.js && node --check ./scripts/evolve-topic-ontology.js",
     "clean:artifacts": "node ./scripts/clean-artifacts.js",
     "bootstrap:ontology": "node ./scripts/bootstrap-topic-ontology.js",
     "expand:topics": "node ./scripts/expand-topic-knowledge.js",
     "evolve:ontology": "node ./scripts/evolve-topic-ontology.js",
-    "test:smoke": "npm run check && npm run bootstrap:ontology"
+    "test:unit": "node --test tests/unit/*.mjs",
+    "test:smoke": "npm run check && npm run test:unit && npm run bootstrap:ontology"
   },
   "dependencies": {
     "commander": "^12.1.0",

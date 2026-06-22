@@ -11,6 +11,8 @@ archive/
 docs/
 pdf-chat-summaries/*
 !pdf-chat-summaries/.gitkeep
+skills-html/
+topic-ontology/external/
 input-files/*
 !input-files/.gitkeep
 

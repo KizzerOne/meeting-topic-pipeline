@@ -91,7 +91,9 @@ export function maskSensitiveContent(value) {
 }
 
 export function parseSummaryResponse(raw) {
-  const cleaned = raw.replace(/^```(?:json)?/i, '').replace(/```$/u, '').trim();
+  const value = String(raw || '').trim();
+  const fenced = value.match(/^```(?:json)?\s*([\s\S]*?)```\s*$/iu);
+  const cleaned = fenced ? fenced[1].trim() : value.replace(/^```(?:json)?/i, '').replace(/```$/u, '').trim();
   try {
     const parsed = JSON.parse(cleaned);
     return {
