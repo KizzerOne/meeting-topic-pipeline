@@ -1,1139 +1,248 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VLM 测试点定位 · 项目仪表板</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: #f0f2f5;
-            color: #1f2a3a;
-            padding: 24px;
-            line-height: 1.5;
-        }
-
-        .app-container {
-            max-width: 1440px;
-            margin: 0 auto;
-        }
-
-        /* --- Header & Navigation --- */
-        .page-header {
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-            padding: 20px 28px;
-            margin-bottom: 24px;
-            border: 1px solid #e8eaed;
-        }
-
-        .page-header h1 {
-            font-size: 22px;
-            font-weight: 600;
-            color: #1f2a3a;
-            letter-spacing: 0.3px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .page-header h1 small {
-            font-size: 13px;
-            font-weight: 400;
-            color: #6b7a8f;
-            background: #f0f2f5;
-            padding: 2px 12px;
-            border-radius: 12px;
-            margin-left: 4px;
-        }
-
-        .topic-nav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px 10px;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #edf0f5;
-        }
-
-        .topic-nav a {
-            text-decoration: none;
-            font-size: 13px;
-            color: #4b5b6c;
-            padding: 6px 16px;
-            border-radius: 16px;
-            background: #f5f7fa;
-            border: 1px solid #e8eaed;
-            transition: all 0.15s;
-            font-weight: 500;
-        }
-
-        .topic-nav a:hover {
-            background: #e8f0fe;
-            color: #3370ff;
-            border-color: #c6d9fb;
-        }
-
-        /* --- Stat cards row --- */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 16px 20px;
-            border: 1px solid #e8eaed;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-        }
-
-        .stat-card .label {
-            font-size: 12px;
-            color: #6b7a8f;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-        }
-
-        .stat-card .value {
-            font-size: 28px;
-            font-weight: 600;
-            color: #1f2a3a;
-            margin-top: 4px;
-        }
-
-        .stat-card .sub {
-            font-size: 12px;
-            color: #8c9aa8;
-            margin-top: 2px;
-        }
-
-        /* --- Panels / Cards --- */
-        .panel {
-            background: #ffffff;
-            border-radius: 8px;
-            border: 1px solid #e8eaed;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-            padding: 20px 24px 24px;
-            margin-bottom: 24px;
-        }
-
-        .panel-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #1f2a3a;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .panel-title .badge {
-            font-size: 11px;
-            font-weight: 400;
-            background: #f0f2f5;
-            color: #6b7a8f;
-            padding: 0 10px;
-            border-radius: 10px;
-            line-height: 20px;
-        }
-
-        .panel-sub {
-            font-size: 12px;
-            color: #8c9aa8;
-            margin-bottom: 12px;
-        }
-
-        /* --- Grid layouts --- */
-        .grid-2col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-
-        .grid-3col {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-        }
-
-        .grid-4col {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-        }
-
-        @media (max-width: 900px) {
-            .grid-2col {
-                grid-template-columns: 1fr;
-            }
-            .grid-3col {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .grid-3col {
-                grid-template-columns: 1fr;
-            }
-            .grid-4col {
-                grid-template-columns: 1fr 1fr;
-            }
-            body {
-                padding: 12px;
-            }
-        }
-
-        /* --- Timeline --- */
-        .timeline {
-            position: relative;
-            padding-left: 28px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 8px;
-            top: 4px;
-            bottom: 4px;
-            width: 2px;
-            background: #e0e4e8;
-            border-radius: 2px;
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 18px;
-            font-size: 13px;
-        }
-
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -24px;
-            top: 4px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #3370ff;
-            border: 2px solid #ffffff;
-            box-shadow: 0 0 0 2px #3370ff;
-        }
-
-        .timeline-item .date {
-            font-weight: 600;
-            color: #3370ff;
-            font-size: 12px;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .timeline-item .desc {
-            color: #2c3a4b;
-        }
-
-        .timeline-item .tag {
-            font-size: 11px;
-            background: #f0f2f5;
-            padding: 0 8px;
-            border-radius: 8px;
-            color: #6b7a8f;
-            margin-left: 6px;
-        }
-
-        /* --- Roadmap --- */
-        .roadmap {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            padding: 8px 0;
-        }
-
-        .roadmap-step {
-            flex: 1 1 140px;
-            background: #f8f9fc;
-            border-radius: 6px;
-            padding: 14px 16px;
-            border-left: 3px solid #3370ff;
-            border: 1px solid #e8eaed;
-            border-left-width: 4px;
-        }
-
-        .roadmap-step .step-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #8c9aa8;
-            letter-spacing: 0.5px;
-            font-weight: 500;
-        }
-
-        .roadmap-step .step-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1f2a3a;
-            margin-top: 4px;
-        }
-
-        .roadmap-step .step-desc {
-            font-size: 12px;
-            color: #5a6b7a;
-            margin-top: 4px;
-        }
-
-        .roadmap-step.status-done {
-            border-left-color: #52c41a;
-        }
-
-        .roadmap-step.status-doing {
-            border-left-color: #3370ff;
-        }
-
-        .roadmap-step.status-todo {
-            border-left-color: #d0d5dd;
-        }
-
-        .roadmap-step.status-warn {
-            border-left-color: #faad14;
-        }
-
-        /* --- Tables --- */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        .data-table th {
-            text-align: left;
-            font-weight: 600;
-            color: #5a6b7a;
-            padding: 10px 12px;
-            border-bottom: 2px solid #e8eaed;
-            font-size: 12px;
-            letter-spacing: 0.3px;
-        }
-
-        .data-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #f0f2f5;
-            color: #1f2a3a;
-        }
-
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .data-table .tag-priority-high {
-            background: #fff1f0;
-            color: #cf1322;
-            padding: 2px 10px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        .data-table .tag-priority-mid {
-            background: #fff7e6;
-            color: #d48806;
-            padding: 2px 10px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        .data-table .tag-status {
-            font-size: 11px;
-            padding: 2px 10px;
-            border-radius: 10px;
-            font-weight: 500;
-            display: inline-block;
-        }
-
-        .tag-status.open {
-            background: #fff1f0;
-            color: #cf1322;
-        }
-
-        .tag-status.resolved {
-            background: #f6ffed;
-            color: #389e0d;
-        }
-
-        .tag-status.pending {
-            background: #fff7e6;
-            color: #d48806;
-        }
-
-        .tag-status.info {
-            background: #e6f7ff;
-            color: #096dd9;
-        }
-
-        /* --- Task Owner Cards --- */
-        .owner-card {
-            background: #f8f9fc;
-            border-radius: 6px;
-            padding: 16px;
-            border: 1px solid #e8eaed;
-            text-align: center;
-        }
-
-        .owner-card .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #e0e8f5;
-            color: #2c5aa0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 600;
-            margin: 0 auto 8px;
-        }
-
-        .owner-card .name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1f2a3a;
-        }
-
-        .owner-card .tasks {
-            font-size: 12px;
-            color: #6b7a8f;
-            margin-top: 6px;
-            line-height: 1.6;
-        }
-
-        .owner-card .task-count {
-            font-size: 11px;
-            background: #e8eaed;
-            padding: 0 8px;
-            border-radius: 8px;
-            color: #5a6b7a;
-            display: inline-block;
-            margin-top: 6px;
-        }
-
-        /* --- Risk Table --- */
-        .risk-tag {
-            display: inline-block;
-            padding: 2px 12px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        .risk-tag.high {
-            background: #fff1f0;
-            color: #cf1322;
-        }
-
-        .risk-tag.mid {
-            background: #fff7e6;
-            color: #d48806;
-        }
-
-        .risk-tag.low {
-            background: #f6ffed;
-            color: #389e0d;
-        }
-
-        /* --- Benchmark bars --- */
-        .benchmark-row {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            gap: 12px;
-            font-size: 13px;
-            border-bottom: 1px solid #f0f2f5;
-        }
-
-        .benchmark-row:last-child {
-            border-bottom: none;
-        }
-
-        .benchmark-row .model-name {
-            width: 70px;
-            font-weight: 500;
-            color: #2c3a4b;
-            flex-shrink: 0;
-        }
-
-        .benchmark-row .bar-track {
-            flex: 1;
-            height: 18px;
-            background: #f0f2f5;
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .benchmark-row .bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            background: #e0e8f5;
-            width: 0%;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 6px;
-            font-size: 10px;
-            color: #1f2a3a;
-            font-weight: 500;
-            min-width: 20px;
-        }
-
-        .benchmark-row .bar-fill.has-data {
-            background: #3370ff;
-        }
-
-        .benchmark-row .score-label {
-            width: 50px;
-            text-align: right;
-            font-size: 12px;
-            color: #6b7a8f;
-            flex-shrink: 0;
-        }
-
-        /* --- Radar (SVG) --- */
-        .radar-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 260px;
-        }
-
-        .radar-wrapper svg {
-            width: 100%;
-            max-width: 320px;
-            height: auto;
-        }
-
-        /* --- Gantt inline --- */
-        .gantt-week {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-            font-size: 12px;
-            padding: 6px 0;
-            border-bottom: 1px solid #f0f2f5;
-        }
-
-        .gantt-week:last-child {
-            border-bottom: none;
-        }
-
-        .gantt-week .task-label {
-            width: 140px;
-            font-weight: 500;
-            color: #2c3a4b;
-            flex-shrink: 0;
-        }
-
-        .gantt-week .bar-group {
-            flex: 1;
-            display: flex;
-            gap: 2px;
-            align-items: center;
-        }
-
-        .gantt-week .bar {
-            height: 16px;
-            border-radius: 3px;
-            background: #e0e8f5;
-            min-width: 6px;
-            flex: 1;
-        }
-
-        .gantt-week .bar.active {
-            background: #3370ff;
-        }
-
-        .gantt-week .bar.partial {
-            background: #b7c8e8;
-        }
-
-        .gantt-week .bar.marker {
-            background: #faad14;
-            width: 4px;
-            flex: 0 0 4px;
-        }
-
-        .gantt-week .owner-tag {
-            font-size: 11px;
-            color: #8c9aa8;
-            width: 60px;
-            text-align: right;
-            flex-shrink: 0;
-        }
-
-        /* --- flow SVG --- */
-        .flow-svg-wrap {
-            width: 100%;
-            overflow-x: auto;
-            text-align: center;
-        }
-
-        .flow-svg-wrap svg {
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* --- misc --- */
-        .missing-data {
-            color: #8c9aa8;
-            font-style: italic;
-            font-size: 12px;
-            background: #fafbfc;
-            padding: 2px 10px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-
-        .change-badge {
-            font-size: 11px;
-            padding: 1px 10px;
-            border-radius: 10px;
-            font-weight: 500;
-        }
-
-        .change-badge.new {
-            background: #e6f7ff;
-            color: #096dd9;
-        }
-
-        .change-badge.updated {
-            background: #fff7e6;
-            color: #d48806;
-        }
-
-        .change-badge.risk {
-            background: #fff1f0;
-            color: #cf1322;
-        }
-
-        .section-desc {
-            font-size: 13px;
-            color: #5a6b7a;
-            margin-bottom: 12px;
-        }
-
-        .compact-mb {
-            margin-bottom: 8px;
-        }
-
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .mt-8 {
-            margin-top: 8px;
-        }
-
-        .text-small {
-            font-size: 12px;
-            color: #8c9aa8;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VLM测试点定位 · Topic 知识库</title>
+  <style>
+:root {
+  --bg: #f0f2f5;
+  --panel: #ffffff;
+  --text: #1f2a3a;
+  --muted: #5f6b7a;
+  --border: #e8eaed;
+  --accent: #3370ff;
+  --accent-soft: #f0f5ff;
+  --risk: #cf1322;
+  --risk-bg: #fff1f0;
+  --new: #08979c;
+  --new-bg: #e6fffb;
+  --updated: #d48806;
+  --updated-bg: #fffbe6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+}
+.page { max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
+.top-bar {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.top-bar h1 { margin: 0 0 6px; font-size: 22px; font-weight: 600; }
+.top-bar .meta { color: var(--muted); font-size: 13px; }
+.topic-nav {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 14px;
+}
+.topic-nav a {
+  text-decoration: none;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+.topic-nav a:hover, .topic-nav a.active {
+  color: var(--accent);
+  border-color: #cfe0ff;
+  background: var(--accent-soft);
+}
+.section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.section h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.section-body { font-size: 14px; }
+.section-body table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.section-body th, .section-body td {
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+.section-body th { background: #f6f8fa; font-weight: 600; }
+.section-body ul { margin: 0; padding-left: 20px; }
+.section-body p { margin: 0 0 8px; }
+.section-body p:last-child { margin-bottom: 0; }
+.change-new { color: var(--new); background: var(--new-bg); padding: 1px 6px; border-radius: 4px; }
+.change-updated { color: var(--updated); background: var(--updated-bg); padding: 1px 6px; border-radius: 4px; }
+.change-risk { color: var(--risk); background: var(--risk-bg); padding: 1px 6px; border-radius: 4px; }
+.footer { color: var(--muted); font-size: 12px; margin-top: 8px; }
+</style>
 </head>
 <body>
-    <div class="app-container">
+  <div class="page">
+    <header class="top-bar">
+      <h1>VLM测试点定位</h1>
+      <p class="meta">KPIT Topic 模块 · 更新时间 2026-06-22T09:04:22.334Z</p>
+      <nav class="topic-nav" aria-label="Topic 导航">
+        <a href="../index.html">知识库索引</a>
+        <a href="../../index.html">输出总目录</a>
+        <a href="Demo_%E8%B7%AF%E7%BA%BF%E5%9B%BE.html" class="">Demo 路线图</a><a href="GitHub_CI_Pages.html" class="">GitHub CI Pages</a><a href="VLM%E6%B5%8B%E8%AF%95%E7%82%B9%E5%AE%9A%E4%BD%8D.html" class="active">VLM测试点定位</a><a href="%E4%BB%BF%E7%9C%9F%E6%9C%BA%E6%A2%B0%E8%87%82.html" class="">仿真机械臂</a><a href="%E6%9C%BA%E6%A2%B0%E8%87%82%E6%8E%A7%E5%88%B6.html" class="">机械臂控制</a><a href="%E6%A8%A1%E5%9E%8B_Benchmark.html" class="">模型 Benchmark</a><a href="%E9%A1%B9%E7%9B%AE%E9%80%9A%E7%94%A8%E4%BA%8B%E9%A1%B9.html" class="">项目通用事项</a>
+      </nav>
+    </header>
+    
+<section class="section" id="一句话摘要">
+  <h2>一句话摘要</h2>
+  <div class="section-body"><p>原文未明确。</p></div>
+</section>
 
-        <!-- ===== HEADER + NAV ===== -->
-        <header class="page-header">
-            <h1>
-                🧠 VLM 测试点定位
-                <small>项目仪表板</small>
-            </h1>
-            <nav class="topic-nav" id="topicNav">
-                <a href="#timeline">📅 时间线</a>
-                <a href="#roadmap">🗺️ 路线图</a>
-                <a href="#flowchart">🔁 流程图</a>
-                <a href="#gantt">📊 甘特图</a>
-                <a href="#benchmark">📈 基准对比</a>
-                <a href="#radar">📡 雷达图</a>
-                <a href="#owners">👤 负责人</a>
-                <a href="#risks">⚠️ 风险表</a>
-            </nav>
-        </header>
+<section class="section" id="模块目标">
+  <h2>模块目标</h2>
+  <div class="section-body"><p>利用视觉大模型（VLM）从位号图、原理图、实物图中自动识别并定位测试点（如芯片引脚），为机械臂提供精确坐标。</p></div>
+</section>
 
-        <!-- ===== STATS ROW ===== -->
-        <div class="stats-row">
-            <div class="stat-card">
-                <div class="label">相关会议</div>
-                <div class="value">7</div>
-                <div class="sub">2026-05-08 至 2026-05-22</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">待办任务</div>
-                <div class="value">5</div>
-                <div class="sub">高优先级 1 项</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">已确认事项</div>
-                <div class="value">4</div>
-                <div class="sub">传统方法已跑通</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">风险项</div>
-                <div class="value">4</div>
-                <div class="sub">VLM 不听话 · 图像变形</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">负责人</div>
-                <div class="value">4</div>
-                <div class="sub">说话人3 · 令 · 说话人5 · 8</div>
-            </div>
-        </div>
+<section class="section" id="相关会议">
+  <h2>相关会议</h2>
+  <div class="section-body"><ul>
+<li>2026-05-08 上午：项目进展与分工</li>
+<li>2026-05-12 下午：机械臂工作讨论</li>
+<li>2026-05-15 上午：机械臂仿真与测试流程对接</li>
+<li>2026-05-15 下午：模型界面与精度讨论</li>
+<li>2026-05-22 上午：项目流程测试点讨论</li>
+<li>2026年5月12日下午：VLM与机械臂项目进展</li>
+<li>2026-05-15 资料更新讨论</li>
+</ul></div>
+</section>
 
-        <!-- ===== 1. TIMELINE ===== -->
-        <section class="panel" id="timeline">
-            <div class="panel-title">📅 时间线 <span class="badge">会议与关键节点</span></div>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <span class="date">2026-05-08 上午</span>
-                    <span class="desc">项目进展与分工</span>
-                </div>
-                <div class="timeline-item">
-                    <span class="date">2026-05-12 下午</span>
-                    <span class="desc">机械臂工作讨论 <span class="tag">VLM 项目进展</span></span>
-                </div>
-                <div class="timeline-item">
-                    <span class="date">2026-05-15 上午</span>
-                    <span class="desc">机械臂仿真与测试流程对接</span>
-                </div>
-                <div class="timeline-item">
-                    <span class="date">2026-05-15 下午</span>
-                    <span class="desc">模型界面与精度讨论 <span class="tag">资料更新讨论</span></span>
-                </div>
-                <div class="timeline-item">
-                    <span class="date">2026-05-22 上午</span>
-                    <span class="desc">项目流程测试点讨论 <span class="tag">确认流程二精度极差</span></span>
-                </div>
-            </div>
-        </section>
+<section class="section" id="当前状态">
+  <h2>当前状态</h2>
+  <div class="section-body"><p>传统方法（位号图→OpenCV几何分析）已跑通1-8步，但仅测了一个例子。VLM替代方案存在模型不按指令执行、跳过几何分析、结构漂移、图像模糊等问题。当前采用“先让模型在位号图上画几何排布，再比对实物图”的改进策略。VLM流程二（直接识别）精度差，芯片误认。</p></div>
+</section>
 
-        <!-- ===== 2. ROADMAP ===== -->
-        <section class="panel" id="roadmap">
-            <div class="panel-title">🗺️ 路线图 <span class="badge">项目阶段</span></div>
-            <div class="roadmap">
-                <div class="roadmap-step status-done">
-                    <div class="step-label">阶段 1 · 已完成</div>
-                    <div class="step-title">传统方法跑通</div>
-                    <div class="step-desc">位号图→OpenCV 几何分析，1-8 步已跑通（仅 1 例）</div>
-                </div>
-                <div class="roadmap-step status-warn">
-                    <div class="step-label">阶段 2 · 探索中</div>
-                    <div class="step-title">VLM 方案一</div>
-                    <div class="step-desc">先画几何排布，再比对实物图 · 改进方向已确定</div>
-                </div>
-                <div class="roadmap-step status-todo">
-                    <div class="step-label">阶段 3 · 待开展</div>
-                    <div class="step-title">VLM 方案二</div>
-                    <div class="step-desc">直接识别（精度差，芯片误认）· 需优化或废弃</div>
-                </div>
-                <div class="roadmap-step status-todo">
-                    <div class="step-label">阶段 4 · 规划中</div>
-                    <div class="step-title">Benchmark 对比</div>
-                    <div class="step-desc">对比书生、千问等模型 · 中优先级</div>
-                </div>
-                <div class="roadmap-step status-todo">
-                    <div class="step-label">阶段 5 · 待启动</div>
-                    <div class="step-title">自检循环流程</div>
-                    <div class="step-desc">固定流程 + AI 自检 · 负责人：说话人5、8</div>
-                </div>
-            </div>
-            <div class="text-small mt-8">* 阶段 2-5 部分时间未明确，标记为 source not explicit</div>
-        </section>
+<section class="section" id="已确认事项">
+  <h2>已确认事项</h2>
+  <div class="section-body"><table>
+<thead><tr>
+<th>事项</th>
+<th>确认结果</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>传统方法（位号图+OpenCV）已跑通</td>
+<td>是（仅一个例子）</td>
+</tr>
+<tr>
+<td>VLM方案需先画几何特征再比对</td>
+<td>已确定改进方向</td>
+</tr>
+<tr>
+<td>多边形组合验证方法：绘制大芯片中心点与周围点的多边形</td>
+<td>已确认验证方法</td>
+</tr>
+<tr>
+<td>图像问题：PDF转图变浅、像素不足（400万 vs 800万）</td>
+<td>已确认</td>
+</tr>
+</tbody></table></div>
+</section>
 
-        <!-- ===== 3. FLOWCHART (SVG) ===== -->
-        <section class="panel" id="flowchart">
-            <div class="panel-title">🔁 流程图 <span class="badge">VLM 测试点定位流程</span></div>
-            <div class="section-desc">传统方法已跑通；VLM 方案一为当前改进方向；方案二精度差。</div>
-            <div class="flow-svg-wrap">
-                <svg viewBox="0 0 760 580" width="760" height="580" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
-                    <!-- 背景 -->
-                    <rect width="760" height="580" fill="#fafbfc" rx="8" />
-                    <!-- 标题 -->
-                    <text x="380" y="32" text-anchor="middle" font-size="15" font-weight="600" fill="#1f2a3a">VLM 测试点定位 · 流程总图</text>
+<section class="section" id="待办事项">
+  <h2>待办事项</h2>
+  <div class="section-body"><table>
+<thead><tr>
+<th>任务</th>
+<th>负责人</th>
+<th>截止时间</th>
+<th>优先级</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>优化VLM流程，限制模型上下文，让模型先在位号图上画几何排布</td>
+<td>说话人3</td>
+<td>未明确（需下午前反馈）</td>
+<td>高</td>
+</tr>
+<tr>
+<td>做Benchmark，对比多个模型（书生、千问等）</td>
+<td>说话人3</td>
+<td>未明确</td>
+<td>中</td>
+</tr>
+<tr>
+<td>调研VLM前处理操作（图像压缩、小网络等）</td>
+<td>令</td>
+<td>未明确</td>
+<td>中</td>
+</tr>
+<tr>
+<td>研究WPS转图方法，提升清晰度</td>
+<td>说话人5</td>
+<td>未明确</td>
+<td>中</td>
+</tr>
+<tr>
+<td>搭建VLM自检循环流程（固定流程+AI自检）</td>
+<td>说话人5、8</td>
+<td>未明确</td>
+<td>中</td>
+</tr>
+</tbody></table></div>
+</section>
 
-                    <!-- 输入 -->
-                    <rect x="280" y="54" width="200" height="40" rx="20" fill="#e6f7ff" stroke="#3370ff" stroke-width="1.5" />
-                    <text x="380" y="79" text-anchor="middle" font-size="13" fill="#1f2a3a" font-weight="500">输入：位号图 / 原理图 / 实物图</text>
+<section class="section" id="负责人与时间表">
+  <h2>负责人与时间表</h2>
+  <div class="section-body"><table>
+<thead><tr>
+<th>事项</th>
+<th>负责人</th>
+<th>截止时间</th>
+<th>状态</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>原文未明确</td>
+<td>原文未明确</td>
+<td>原文未明确</td>
+<td>原文未明确</td>
+</tr>
+</tbody></table></div>
+</section>
 
-                    <!-- 箭头 -->
-                    <line x1="380" y1="94" x2="380" y2="120" stroke="#8c9aa8" stroke-width="1.5" marker-end="url(#arrow)" />
+<section class="section" id="风险或未解决问题">
+  <h2>风险或未解决问题</h2>
+  <div class="section-body"><ul>
+<li>&lt;span class=&quot;change-risk&quot;&gt;风险：VLM模型不听话，跳过关键步骤，定位不准确。&lt;/span&gt;</li>
+<li>&lt;span class=&quot;change-risk&quot;&gt;风险：PDF转图变浅、结构变形导致VLM识别错误。&lt;/span&gt;</li>
+<li>&lt;span class=&quot;change-risk&quot;&gt;风险：实物图圈点不准确，需要人工修正。&lt;/span&gt;</li>
+<li>&lt;span class=&quot;change-risk&quot;&gt;风险：千问模型像素压缩导致精度损失。&lt;/span&gt;</li>
+</ul></div>
+</section>
 
-                    <!-- 传统方法 -->
-                    <rect x="250" y="126" width="260" height="44" rx="6" fill="#f6ffed" stroke="#52c41a" stroke-width="1.5" />
-                    <text x="380" y="146" text-anchor="middle" font-size="13" fill="#1f2a3a" font-weight="500">传统方法：位号图 → OpenCV 几何分析</text>
-                    <text x="380" y="162" text-anchor="middle" font-size="11" fill="#52c41a">✓ 已跑通（仅 1 例）</text>
+<section class="section" id="Demo_影响">
+  <h2>Demo 影响</h2>
+  <div class="section-body"><p>原文未明确。</p></div>
+</section>
 
-                    <!-- 箭头 -->
-                    <line x1="380" y1="170" x2="380" y2="196" stroke="#8c9aa8" stroke-width="1.5" marker-end="url(#arrow)" />
-
-                    <!-- VLM 方案一 -->
-                    <rect x="210" y="202" width="340" height="50" rx="6" fill="#fff7e6" stroke="#faad14" stroke-width="1.5" />
-                    <text x="380" y="222" text-anchor="middle" font-size="13" fill="#1f2a3a" font-weight="500">VLM 方案一（改进方向）：先画几何排布 → 再比对实物图</text>
-                    <text x="380" y="242" text-anchor="middle" font-size="11" fill="#d48806">多边形组合验证方法已确认</text>
-
-                    <!-- 箭头 -->
-                    <line x1="380" y1="252" x2="380" y2="278" stroke="#8c9aa8" stroke-width="1.5" marker-end="url(#arrow)" />
-
-                    <!-- VLM 方案二 -->
-                    <rect x="230" y="284" width="300" height="44" rx="6" fill="#fff1f0" stroke="#ff4d4f" stroke-width="1.5" />
-                    <text x="380" y="304" text-anchor="middle" font-size="13" fill="#1f2a3a" font-weight="500">VLM 方案二：直接识别</text>
-                    <text x="380" y="320" text-anchor="middle" font-size="11" fill="#cf1322">✗ 精度差，芯片误认（5月22日确认）</text>
-
-                    <!-- 箭头 -->
-                    <line x1="380" y1="328" x2="380" y2="354" stroke="#8c9aa8" stroke-width="1.5" marker-end="url(#arrow)" />
-
-                    <!-- 验证 -->
-                    <rect x="260" y="360" width="240" height="40" rx="6" fill="#f0f2f5" stroke="#8c9aa8" stroke-width="1.5" stroke-dasharray="4,4" />
-                    <text x="380" y="385" text-anchor="middle" font-size="13" fill="#2c3a4b">多边形组合验证（大芯片中心点 + 周围点）</text>
-
-                    <!-- 箭头 -->
-                    <line x1="380" y1="400" x2="380" y2="426" stroke="#8c9aa8" stroke-width="1.5" marker-end="url(#arrow)" />
-
-                    <!-- 输出 -->
-                    <rect x="290" y="432" width="180" height="40" rx="20" fill="#e6f7ff" stroke="#3370ff" stroke-width="1.5" />
-                    <text x="380" y="457" text-anchor="middle" font-size="13" fill="#1f2a3a" font-weight="500">输出：测试点精确坐标</text>
-
-                    <!-- 箭头 -->
-                    <line x1="380" y1="472" x2="380" y2="498" stroke="#8c9aa8" stroke-width="1.5" marker-end="url(#arrow)" />
-
-                    <!-- 最终 -->
-                    <rect x="300" y="504" width="160" height="34" rx="17" fill="#3370ff" />
-                    <text x="380" y="527" text-anchor="middle" font-size="13" fill="#ffffff" font-weight="500">为机械臂提供坐标</text>
-
-                    <!-- 箭头定义 -->
-                    <defs>
-                        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                            <path d="M0,0 L10,5 L0,10 z" fill="#8c9aa8" />
-                        </marker>
-                    </defs>
-
-                    <!-- 图例 -->
-                    <rect x="16" y="540" width="12" height="12" fill="#f6ffed" stroke="#52c41a" stroke-width="1.5" rx="2" />
-                    <text x="34" y="552" font-size="11" fill="#5a6b7a">传统方法</text>
-                    <rect x="116" y="540" width="12" height="12" fill="#fff7e6" stroke="#faad14" stroke-width="1.5" rx="2" />
-                    <text x="134" y="552" font-size="11" fill="#5a6b7a">VLM 方案一</text>
-                    <rect x="220" y="540" width="12" height="12" fill="#fff1f0" stroke="#ff4d4f" stroke-width="1.5" rx="2" />
-                    <text x="238" y="552" font-size="11" fill="#5a6b7a">VLM 方案二</text>
-                </svg>
-            </div>
-        </section>
-
-        <!-- ===== 4. GANTT CHART ===== -->
-        <section class="panel" id="gantt">
-            <div class="panel-title">📊 甘特图 <span class="badge">任务时间线（部分日期未明确）</span></div>
-            <div class="section-desc">基于待办事项与会议记录。截止时间多数未明确，标记为 source not explicit。</div>
-            <div style="overflow-x:auto;">
-                <table style="width:100%;border-collapse:collapse;font-size:13px;">
-                    <thead>
-                        <tr style="border-bottom:2px solid #e8eaed;">
-                            <th style="text-align:left;padding:8px 12px;font-size:12px;color:#5a6b7a;width:170px;">任务</th>
-                            <th style="text-align:center;padding:8px 4px;font-size:11px;color:#8c9aa8;width:60px;">5月8日</th>
-                            <th style="text-align:center;padding:8px 4px;font-size:11px;color:#8c9aa8;width:60px;">5月12日</th>
-                            <th style="text-align:center;padding:8px 4px;font-size:11px;color:#8c9aa8;width:60px;">5月15日</th>
-                            <th style="text-align:center;padding:8px 4px;font-size:11px;color:#8c9aa8;width:60px;">5月22日</th>
-                            <th style="text-align:center;padding:8px 4px;font-size:11px;color:#8c9aa8;width:60px;">之后</th>
-                            <th style="text-align:left;padding:8px 12px;font-size:11px;color:#8c9aa8;width:80px;">负责人</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr style="border-bottom:1px solid #f0f2f5;">
-                            <td style="padding:10px 12px;font-weight:500;">传统方法跑通</td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#52c41a;border-radius:3px;"></span></td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#52c41a;border-radius:3px;"></span></td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#e0e8f5;border-radius:3px;"></span></td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 12px;color:#6b7a8f;">团队</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #f0f2f5;">
-                            <td style="padding:10px 12px;font-weight:500;">优化 VLM 流程（画几何排布）</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#faad14;border-radius:3px;"></span></td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#faad14;border-radius:3px;"></span></td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#3370ff;border-radius:3px;"></span></td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#e0e8f5;border-radius:3px;"></span></td>
-                            <td style="padding:10px 12px;color:#6b7a8f;">说话人3</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #f0f2f5;">
-                            <td style="padding:10px 12px;font-weight:500;">做 Benchmark（书生·千问等）</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#3370ff;border-radius:3px;"></span></td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#e0e8f5;border-radius:3px;"></span></td>
-                            <td style="padding:10px 12px;color:#6b7a8f;">说话人3</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #f0f2f5;">
-                            <td style="padding:10px 12px;font-weight:500;">调研 VLM 前处理（压缩/小网络）</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#3370ff;border-radius:3px;"></span></td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#e0e8f5;border-radius:3px;"></span></td>
-                            <td style="padding:10px 12px;color:#6b7a8f;">令</td>
-                        </tr>
-                        <tr style="border-bottom:1px solid #f0f2f5;">
-                            <td style="padding:10px 12px;font-weight:500;">研究 WPS 转图方法</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#3370ff;border-radius:3px;"></span></td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#e0e8f5;border-radius:3px;"></span></td>
-                            <td style="padding:10px 12px;color:#6b7a8f;">说话人5</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:10px 12px;font-weight:500;">搭建 VLM 自检循环流程</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;">—</td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#3370ff;border-radius:3px;"></span></td>
-                            <td style="padding:10px 4px;text-align:center;"><span style="display:inline-block;width:20px;height:12px;background:#e0e8f5;border-radius:3px;"></span></td>
-                            <td style="padding:10px 12px;color:#6b7a8f;">说话人5、8</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="text-small mt-8">■ 已完成 &nbsp;■ 进行中 &nbsp;■ 规划中 &nbsp;— 未开始 / 无数据</div>
-            <div class="text-small mt-8">* 多数截止时间源未明确，图中“之后”列表示待排期。</div>
-        </section>
-
-        <!-- ===== 5. BENCHMARK + 6. RADAR (并排) ===== -->
-        <div class="grid-2col">
-            <!-- BENCHMARK -->
-            <section class="panel" id="benchmark">
-                <div class="panel-title">📈 模型 Benchmark 对比 <span class="badge">书生 · 千问 等</span></div>
-                <div class="section-desc">源文件确认需对比多个模型，但未提供具体分数。以下展示框架，数据标记为 source not explicit。</div>
-                <div>
-                    <div class="benchmark-row">
-                        <span class="model-name">书生</span>
-                        <div class="bar-track">
-                            <div class="bar-fill" style="width:68%;background:#e0e8f5;">—</div>
-                        </div>
-                        <span class="score-label">source not explicit</span>
-                    </div>
-                    <div class="benchmark-row">
-                        <span class="model-name">千问</span>
-                        <div class="bar-track">
-                            <div class="bar-fill" style="width:72%;background:#e0e8f5;">—</div>
-                        </div>
-                        <span class="score-label">source not explicit</span>
-                    </div>
-                    <div class="benchmark-row">
-                        <span class="model-name">GLM</span>
-                        <div class="bar-track">
-                            <div class="bar-fill" style="width:0%;background:#f0f2f5;min-width:20px;color:#aaa;">N/A</div>
-                        </div>
-                        <span class="score-label">source not explicit</span>
-                    </div>
-                    <div class="benchmark-row">
-                        <span class="model-name">Claude</span>
-                        <div class="bar-track">
-                            <div class="bar-fill" style="width:0%;background:#f0f2f5;min-width:20px;color:#aaa;">N/A</div>
-                        </div>
-                        <span class="score-label">source not explicit</span>
-                    </div>
-                </div>
-                <div class="text-small mt-8">* 条形图高度仅为占位，无实际 Benchmark 数据。待说话人3补充。</div>
-            </section>
-
-            <!-- RADAR -->
-            <section class="panel" id="radar">
-                <div class="panel-title">📡 雷达图 <span class="badge">模型能力评估（源未提供数据）</span></div>
-                <div class="section-desc">维度基于项目讨论推断，所有评分源未明确。</div>
-                <div class="radar-wrapper">
-                    <svg viewBox="0 0 320 320" width="320" height="320" xmlns="http://www.w3.org/2000/svg">
-                        <!-- 网格 -->
-                        <polygon points="160,40 280,100 280,220 160,280 40,220 40,100" fill="#f5f7fa" stroke="#d0d5dd" stroke-width="1" />
-                        <polygon points="160,80 240,120 240,200 160,240 80,200 80,120" fill="#f8f9fc" stroke="#d0d5dd" stroke-width="0.8" />
-                        <polygon points="160,120 200,140 200,180 160,200 120,180 120,140" fill="#fafbfc" stroke="#d0d5dd" stroke-width="0.6" />
-                        <circle cx="160" cy="160" r="2" fill="#8c9aa8" />
-
-                        <!-- 轴标签 -->
-                        <text x="160" y="30" text-anchor="middle" font-size="10" fill="#5a6b7a">识别精度</text>
-                        <text x="292" y="104" text-anchor="start" font-size="10" fill="#5a6b7a">指令执行</text>
-                        <text x="292" y="224" text-anchor="start" font-size="10" fill="#5a6b7a">几何分析</text>
-                        <text x="160" y="298" text-anchor="middle" font-size="10" fill="#5a6b7a">抗干扰</text>
-                        <text x="20" y="224" text-anchor="end" font-size="10" fill="#5a6b7a">图像处理</text>
-                        <text x="20" y="104" text-anchor="end" font-size="10" fill="#5a6b7a">稳定性</text>
-
-                        <!-- 数据多边形 (占位，无数据) -->
-                        <polygon points="160,160 160,160 160,160 160,160 160,160 160,160" fill="rgba(51,112,255,0.15)" stroke="#3370ff" stroke-width="1.5" stroke-dasharray="4,4" />
-                        <circle cx="160" cy="160" r="3" fill="#3370ff" opacity="0.4" />
-
-                        <!-- 标注 -->
-                        <text x="160" y="170" text-anchor="middle" font-size="11" fill="#8c9aa8" font-style="italic">数据源未明确</text>
-                    </svg>
-                </div>
-                <div class="text-small" style="text-align:center;">* 六边形表示模型能力维度，所有评分暂为「source not explicit」</div>
-            </section>
-        </div>
-
-        <!-- ===== 7. TASK OWNER CARDS ===== -->
-        <section class="panel" id="owners">
-            <div class="panel-title">👤 任务负责人 <span class="badge">4 位负责人</span></div>
-            <div class="grid-4col">
-                <div class="owner-card">
-                    <div class="avatar">S3</div>
-                    <div class="name">说话人3</div>
-                    <div class="tasks">优化 VLM 流程（画几何排布）<br>做 Benchmark（书生·千问等）</div>
-                    <span class="task-count">2 项任务</span>
-                </div>
-                <div class="owner-card">
-                    <div class="avatar">令</div>
-                    <div class="name">令</div>
-                    <div class="tasks">调研 VLM 前处理操作<br>（图像压缩、小网络等）</div>
-                    <span class="task-count">1 项任务</span>
-                </div>
-                <div class="owner-card">
-                    <div class="avatar">S5</div>
-                    <div class="name">说话人5</div>
-                    <div class="tasks">研究 WPS 转图方法<br>搭建 VLM 自检循环流程（同 S8）</div>
-                    <span class="task-count">2 项任务</span>
-                </div>
-                <div class="owner-card">
-                    <div class="avatar">S8</div>
-                    <div class="name">说话人8</div>
-                    <div class="tasks">搭建 VLM 自检循环流程<br>（与说话人5协作）</div>
-                    <span class="task-count">1 项任务</span>
-                </div>
-            </div>
-            <div class="text-small mt-8">* 负责人信息来源于待办事项表格。说话人3、5、8为会议角色，姓名未明确。</div>
-        </section>
-
-        <!-- ===== 8. RISK STATUS TABLE ===== -->
-        <section class="panel" id="risks">
-            <div class="panel-title">⚠️ 风险状态表 <span class="badge">4 项已确认风险</span></div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>风险描述</th>
-                        <th>类别</th>
-                        <th>状态</th>
-                        <th>来源</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>VLM 模型不听话，跳过关键步骤，定位不准确</td>
-                        <td><span class="risk-tag high">模型行为</span></td>
-                        <td><span class="tag-status open">未解决</span></td>
-                        <td>源文件确认</td>
-                    </tr>
-                    <tr>
-                        <td>PDF 转图变浅、结构变形导致 VLM 识别错误</td>
-                        <td><span class="risk-tag high">图像质量</span></td>
-                        <td><span class="tag-status open">未解决</span></td>
-                        <td>源文件确认</td>
-                    </tr>
-                    <tr>
-                        <td>实物图圈点不准确，需要人工修正</td>
-                        <td><span class="risk-tag mid">标注精度</span></td>
-                        <td><span class="tag-status pending">需人工介入</span></td>
-                        <td>源文件确认</td>
-                    </tr>
-                    <tr>
-                        <td>千问模型像素压缩导致精度损失</td>
-                        <td><span class="risk-tag mid">模型压缩</span></td>
-                        <td><span class="tag-status pending">调研中</span></td>
-                        <td>源文件确认</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="text-small mt-8">* 风险状态与描述均直接来源于源文件「风险或未解决问题」章节。</div>
-        </section>
-
-        <!-- ===== 9. TOPIC NAVIGATION (已内嵌在顶部) ===== -->
-        <!-- 同时也作为补充导航区 -->
-        <section class="panel" style="margin-bottom:0;">
-            <div class="panel-title">🧭 主题导航 <span class="badge">快速跳转</span></div>
-            <div class="section-desc">点击标签可快速定位到对应模块。</div>
-            <div class="topic-nav" style="border-top:none;padding-top:0;margin-top:0;">
-                <a href="#timeline">📅 时间线</a>
-                <a href="#roadmap">🗺️ 路线图</a>
-                <a href="#flowchart">🔁 流程图</a>
-                <a href="#gantt">📊 甘特图</a>
-                <a href="#benchmark">📈 基准对比</a>
-                <a href="#radar">📡 雷达图</a>
-                <a href="#owners">👤 负责人</a>
-                <a href="#risks">⚠️ 风险表</a>
-                <a href="#topicNav">⤴ 返回顶部</a>
-            </div>
-            <div class="text-small mt-8" style="border-top:1px solid #f0f2f5;padding-top:12px;">
-                <strong>📌 最近变化</strong> · 
-                <span class="change-badge updated">变化</span> 5月22日确认流程二（VLM直接识别）精度极差，芯片误认。 · 
-                <span class="change-badge new">新增</span> 多边形组合验证方法被提出并接受。 · 
-                <span class="change-badge new">新增</span> 需要研究WPS转图和云端转图方案。
-            </div>
-        </section>
-
-        <!-- ===== FOOTER ===== -->
-        <div style="text-align:center;font-size:12px;color:#8c9aa8;padding:24px 0 8px;">
-            基于源文件 · VLM测试点定位 · 项目仪表板 &mdash; 数据截至 2026-05-22
-        </div>
-
-    </div>
-    <!-- 小幅滚动监听，高亮导航 (纯JS) -->
-    <script>
-        (function() {
-            const navLinks = document.querySelectorAll('.topic-nav a');
-            const sections = [];
-            navLinks.forEach(a => {
-                const href = a.getAttribute('href');
-                if (href && href.startsWith('#')) {
-                    const id = href.substring(1);
-                    const el = document.getElementById(id);
-                    if (el) sections.push({ id, el, link: a });
-                }
-            });
-            function updateNav() {
-                let currentId = null;
-                const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-                for (const s of sections) {
-                    const rect = s.el.getBoundingClientRect();
-                    const top = rect.top + window.scrollY;
-                    if (scrollY >= top - 120) {
-                        currentId = s.id;
-                    }
-                }
-                navLinks.forEach(a => {
-                    a.style.background = '#f5f7fa';
-                    a.style.color = '#4b5b6c';
-                    a.style.borderColor = '#e8eaed';
-                });
-                if (currentId) {
-                    const active = document.querySelector(`.topic-nav a[href="#${currentId}"]`);
-                    if (active) {
-                        active.style.background = '#e8f0fe';
-                        active.style.color = '#3370ff';
-                        active.style.borderColor = '#c6d9fb';
-                    }
-                }
-            }
-            window.addEventListener('scroll', updateNav);
-            window.addEventListener('load', updateNav);
-        })();
-    </script>
+<section class="section" id="最近变化">
+  <h2>最近变化</h2>
+  <div class="section-body"><ul>
+<li>&lt;span class=&quot;change-updated&quot;&gt;变化：5月22日确认流程二（VLM直接识别）精度极差，芯片被误认。&lt;/span&gt;</li>
+<li>&lt;span class=&quot;change-new&quot;&gt;新增：多边形组合验证方法被提出并接受。&lt;/span&gt;</li>
+<li>&lt;span class=&quot;change-new&quot;&gt;新增：需要研究WPS转图和云端转图方案。&lt;/span&gt;</li>
+</ul></div>
+</section>
+    <p class="footer">Markdown 源：meeting-knowledge/modules/VLM测试点定位.md</p>
+  </div>
 </body>
 </html>

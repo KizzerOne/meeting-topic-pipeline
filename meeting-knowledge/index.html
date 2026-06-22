@@ -1,825 +1,142 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>会议知识库 · 项目管理看板</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif;
-        }
-        body {
-            background: #f5f7fa;
-            padding: 24px;
-            color: #1e2a3a;
-        }
-
-        .page-wrap {
-            max-width: 1440px;
-            margin: 0 auto;
-        }
-
-        /* --- Feishu style tokens --- */
-        :root {
-            --panel-bg: #ffffff;
-            --border-light: #e8eaed;
-            --border-fine: #eef0f4;
-            --bg-soft: #f8f9fc;
-            --text-main: #1e2a3a;
-            --text-secondary: #5e6c84;
-            --text-muted: #8b95a6;
-            --accent-blue: #2b6cf6;
-            --accent-green: #34c759;
-            --accent-orange: #ff9500;
-            --accent-red: #ff3b30;
-            --accent-purple: #7c3aed;
-            --accent-cyan: #0ea5e9;
-            --shadow-panel: 0 2px 8px rgba(0, 0, 0, 0.04);
-            --radius-panel: 12px;
-            --radius-card: 8px;
-        }
-
-        /* --- header --- */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .page-header h1 {
-            font-size: 28px;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-            color: var(--text-main);
-        }
-        .page-header .badge {
-            background: var(--bg-soft);
-            border: 1px solid var(--border-light);
-            border-radius: 20px;
-            padding: 6px 16px;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        .page-header .badge span {
-            font-weight: 600;
-            color: var(--accent-blue);
-        }
-
-        /* --- grid layout --- */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-        }
-        @media (max-width: 1024px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        @media (max-width: 640px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* --- panel cards --- */
-        .panel {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-panel);
-            box-shadow: var(--shadow-panel);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        .panel-header {
-            padding: 16px 20px 12px 20px;
-            border-bottom: 1px solid var(--border-fine);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-soft);
-        }
-        .panel-header h2 {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .panel-header .tag {
-            font-size: 11px;
-            background: #eef2ff;
-            color: var(--accent-blue);
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-weight: 500;
-        }
-        .panel-body {
-            padding: 16px 20px 20px 20px;
-            flex: 1;
-        }
-
-        /* --- placeholder style for missing data --- */
-        .missing-note {
-            font-size: 13px;
-            color: var(--text-muted);
-            background: #fafbfc;
-            border: 1px dashed #d0d5dd;
-            border-radius: 8px;
-            padding: 12px 14px;
-            margin-top: 8px;
-        }
-
-        /* --- compact table --- */
-        .compact-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        .compact-table th {
-            text-align: left;
-            font-weight: 500;
-            color: var(--text-secondary);
-            padding: 8px 6px 6px 6px;
-            border-bottom: 1px solid var(--border-fine);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        .compact-table td {
-            padding: 10px 6px;
-            border-bottom: 1px solid var(--border-fine);
-            color: var(--text-main);
-        }
-        .compact-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* --- status tags --- */
-        .status-tag {
-            display: inline-block;
-            padding: 2px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-            line-height: 20px;
-        }
-        .status-green {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        .status-orange {
-            background: #fff3e0;
-            color: #e65100;
-        }
-        .status-red {
-            background: #ffebee;
-            color: #c62828;
-        }
-        .status-blue {
-            background: #e3f2fd;
-            color: #0d47a1;
-        }
-        .status-gray {
-            background: #f3f4f6;
-            color: #5e6c84;
-        }
-
-        /* --- metric card row --- */
-        .metric-row {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-        }
-        .metric-card {
-            background: var(--bg-soft);
-            border: 1px solid var(--border-fine);
-            border-radius: var(--radius-card);
-            padding: 12px 16px;
-            flex: 1;
-            min-width: 90px;
-        }
-        .metric-card .label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-        .metric-card .value {
-            font-size: 22px;
-            font-weight: 600;
-            color: var(--text-main);
-        }
-        .metric-card .sub {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* --- kanban card / task owner card --- */
-        .task-card {
-            background: var(--bg-soft);
-            border: 1px solid var(--border-fine);
-            border-radius: var(--radius-card);
-            padding: 14px 16px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .task-card .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #e0e7ff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: var(--accent-blue);
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-        .task-card .info {
-            flex: 1;
-        }
-        .task-card .info .name {
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .task-card .info .role {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        .task-card .info .meta {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* --- flowchart SVG inline --- */
-        .flowchart-svg {
-            width: 100%;
-            max-width: 400px;
-            display: block;
-            margin: 0 auto;
-        }
-
-        /* --- Gantt bar --- */
-        .gantt-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-        .gantt-row .label {
-            width: 80px;
-            flex-shrink: 0;
-            color: var(--text-secondary);
-        }
-        .gantt-track {
-            flex: 1;
-            height: 22px;
-            background: #f0f2f5;
-            border-radius: 4px;
-            position: relative;
-            overflow: hidden;
-        }
-        .gantt-bar {
-            height: 100%;
-            border-radius: 4px;
-            background: var(--accent-blue);
-            opacity: 0.75;
-            min-width: 6px;
-        }
-        .gantt-bar.orange {
-            background: var(--accent-orange);
-        }
-        .gantt-bar.green {
-            background: var(--accent-green);
-        }
-        .gantt-bar.purple {
-            background: var(--accent-purple);
-        }
-
-        /* --- benchmark bar chart --- */
-        .bench-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-        .bench-bar .label {
-            width: 80px;
-            flex-shrink: 0;
-            font-weight: 500;
-        }
-        .bench-bar .track {
-            flex: 1;
-            height: 18px;
-            background: #f0f2f5;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .bench-bar .fill {
-            height: 100%;
-            border-radius: 4px;
-            background: var(--accent-cyan);
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 6px;
-            color: #fff;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        /* --- radar chart (inline SVG) --- */
-        .radar-wrap {
-            display: flex;
-            justify-content: center;
-            padding: 8px 0;
-        }
-
-        /* --- timeline simple --- */
-        .timeline-item {
-            display: flex;
-            gap: 14px;
-            padding-left: 4px;
-            margin-bottom: 16px;
-            position: relative;
-        }
-        .timeline-item .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--accent-blue);
-            margin-top: 4px;
-            flex-shrink: 0;
-            border: 2px solid #fff;
-            box-shadow: 0 0 0 2px var(--accent-blue);
-        }
-        .timeline-item .dot.orange {
-            background: var(--accent-orange);
-            box-shadow: 0 0 0 2px var(--accent-orange);
-        }
-        .timeline-item .dot.green {
-            background: var(--accent-green);
-            box-shadow: 0 0 0 2px var(--accent-green);
-        }
-        .timeline-item .dot.purple {
-            background: var(--accent-purple);
-            box-shadow: 0 0 0 2px var(--accent-purple);
-        }
-        .timeline-item .content .date {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        .timeline-item .content .desc {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        /* --- roadmap items --- */
-        .roadmap-phase {
-            margin-bottom: 14px;
-        }
-        .roadmap-phase .phase-title {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--accent-blue);
-            margin-bottom: 4px;
-        }
-        .roadmap-phase .phase-items {
-            font-size: 13px;
-            color: var(--text-secondary);
-            padding-left: 12px;
-            border-left: 3px solid var(--border-fine);
-        }
-        .roadmap-phase .phase-items li {
-            margin-bottom: 4px;
-        }
-
-        /* --- topic nav --- */
-        .topic-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .topic-grid a {
-            display: block;
-            background: var(--bg-soft);
-            border: 1px solid var(--border-fine);
-            border-radius: var(--radius-card);
-            padding: 12px 14px;
-            text-decoration: none;
-            color: var(--text-main);
-            font-size: 14px;
-            font-weight: 500;
-            transition: background 0.15s, border-color 0.15s;
-        }
-        .topic-grid a:hover {
-            background: #eef2ff;
-            border-color: #c7d2fe;
-        }
-        .topic-grid a .ext {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 400;
-            margin-left: 6px;
-        }
-
-        /* --- risk table --- */
-        .risk-table td {
-            vertical-align: middle;
-        }
-        .risk-table .risk-desc {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        /* --- misc --- */
-        .mt-2 {
-            margin-top: 8px;
-        }
-        .mb-1 {
-            margin-bottom: 4px;
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* divider */
-        .divider-text {
-            font-size: 12px;
-            color: var(--text-muted);
-            padding: 8px 0 4px 0;
-            border-top: 1px solid var(--border-fine);
-            margin-top: 12px;
-        }
-
-        /* full-width panels */
-        .full-width {
-            grid-column: 1 / -1;
-        }
-        .half-width {
-            grid-column: span 2;
-        }
-        @media (max-width: 640px) {
-            .half-width {
-                grid-column: span 1;
-            }
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>会议知识库索引</title>
+  <style>
+:root {
+  --bg: #f0f2f5;
+  --panel: #ffffff;
+  --text: #1f2a3a;
+  --muted: #5f6b7a;
+  --border: #e8eaed;
+  --accent: #3370ff;
+  --accent-soft: #f0f5ff;
+  --risk: #cf1322;
+  --risk-bg: #fff1f0;
+  --new: #08979c;
+  --new-bg: #e6fffb;
+  --updated: #d48806;
+  --updated-bg: #fffbe6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+}
+.page { max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
+.top-bar {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.top-bar h1 { margin: 0 0 6px; font-size: 22px; font-weight: 600; }
+.top-bar .meta { color: var(--muted); font-size: 13px; }
+.topic-nav {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 14px;
+}
+.topic-nav a {
+  text-decoration: none;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+.topic-nav a:hover, .topic-nav a.active {
+  color: var(--accent);
+  border-color: #cfe0ff;
+  background: var(--accent-soft);
+}
+.section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.section h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.section-body { font-size: 14px; }
+.section-body table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.section-body th, .section-body td {
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+.section-body th { background: #f6f8fa; font-weight: 600; }
+.section-body ul { margin: 0; padding-left: 20px; }
+.section-body p { margin: 0 0 8px; }
+.section-body p:last-child { margin-bottom: 0; }
+.change-new { color: var(--new); background: var(--new-bg); padding: 1px 6px; border-radius: 4px; }
+.change-updated { color: var(--updated); background: var(--updated-bg); padding: 1px 6px; border-radius: 4px; }
+.change-risk { color: var(--risk); background: var(--risk-bg); padding: 1px 6px; border-radius: 4px; }
+.footer { color: var(--muted); font-size: 12px; margin-top: 8px; }
+</style>
 </head>
 <body>
-<div class="page-wrap">
-
-    <!-- header -->
-    <header class="page-header">
-        <h1>📋 会议知识库</h1>
-        <div class="badge">🕐 更新于 <span>2026‑06‑03 07:28 UTC</span></div>
+  <div class="page">
+    <header class="top-bar">
+      <h1>会议知识库索引</h1>
+      <p class="meta">更新时间 2026-06-22T09:04:22.334Z · 7 个 Topic 模块</p>
+      <nav class="topic-nav">
+        <a href="../index.html">输出总目录</a>
+        <a href="overall-summary.html">会议总览</a>
+      </nav>
     </header>
-
-    <div class="dashboard-grid">
-
-        <!-- ===== 1. 时间线 Timeline ===== -->
-        <div class="panel">
-            <div class="panel-header">
-                <h2>⏱️ 时间线</h2>
-                <span class="tag">Timeline</span>
-            </div>
-            <div class="panel-body">
-                <div class="timeline-item">
-                    <div class="dot green"></div>
-                    <div class="content">
-                        <div class="date">2026‑06‑03</div>
-                        <div class="desc">知识库索引发布</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="dot"></div>
-                    <div class="content">
-                        <div class="date">2026‑05 (source not explicit)</div>
-                        <div class="desc">机械臂控制模块 基线完成</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="dot orange"></div>
-                    <div class="content">
-                        <div class="date">2026‑Q2 (source not explicit)</div>
-                        <div class="desc">VLM 测试点定位 集成</div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="dot purple"></div>
-                    <div class="content">
-                        <div class="date">source not explicit</div>
-                        <div class="desc">Demo 路线图 里程碑</div>
-                    </div>
-                </div>
-                <div class="missing-note">部分日期源未明确，已标注占位。</div>
-            </div>
-        </div>
-
-        <!-- ===== 2. 路线图 Roadmap ===== -->
-        <div class="panel">
-            <div class="panel-header">
-                <h2>🗺️ 路线图</h2>
-                <span class="tag">Roadmap</span>
-            </div>
-            <div class="panel-body">
-                <div class="roadmap-phase">
-                    <div class="phase-title">Phase 1 · 基础能力</div>
-                    <div class="phase-items">
-                        <li>机械臂控制 (source not explicit)</li>
-                        <li>仿真机械臂 (source not explicit)</li>
-                    </div>
-                </div>
-                <div class="roadmap-phase">
-                    <div class="phase-title">Phase 2 · 感知与集成</div>
-                    <div class="phase-items">
-                        <li>VLM 测试点定位 (source not explicit)</li>
-                        <li>GitHub CI Pages 部署</li>
-                    </div>
-                </div>
-                <div class="roadmap-phase">
-                    <div class="phase-title">Phase 3 · 验证与演示</div>
-                    <div class="phase-items">
-                        <li>Demo 路线图 (source not explicit)</li>
-                        <li>模型 Benchmark (source not explicit)</li>
-                    </div>
-                </div>
-                <div class="missing-note">具体日期与依赖源未明确。</div>
-            </div>
-        </div>
-
-        <!-- ===== 3. 流程图 Flowchart ===== -->
-        <div class="panel">
-            <div class="panel-header">
-                <h2>🔁 流程图</h2>
-                <span class="tag">Flowchart</span>
-            </div>
-            <div class="panel-body">
-                <svg class="flowchart-svg" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="8" width="130" height="36" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1.5" />
-                    <text x="75" y="31" text-anchor="middle" font-size="13" fill="#1e2a3a" font-weight="500">会议知识库索引</text>
-
-                    <rect x="10" y="68" width="130" height="36" rx="6" fill="#f3f4f6" stroke="#d0d5dd" stroke-width="1.2" />
-                    <text x="75" y="91" text-anchor="middle" font-size="12" fill="#5e6c84">模块页 (Markdown)</text>
-
-                    <rect x="180" y="68" width="130" height="36" rx="6" fill="#f3f4f6" stroke="#d0d5dd" stroke-width="1.2" />
-                    <text x="245" y="91" text-anchor="middle" font-size="12" fill="#5e6c84">模块页 (HTML)</text>
-
-                    <rect x="90" y="128" width="130" height="36" rx="6" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1.5" />
-                    <text x="155" y="151" text-anchor="middle" font-size="13" fill="#1e2a3a" font-weight="500">项目管理看板</text>
-
-                    <!-- arrows -->
-                    <line x1="75" y1="44" x2="75" y2="66" stroke="#9aa6b9" stroke-width="1.5" marker-end="url(#arrow)" />
-                    <line x1="195" y1="86" x2="245" y2="86" stroke="#9aa6b9" stroke-width="1.5" marker-end="url(#arrow)" />
-                    <line x1="245" y1="104" x2="155" y2="126" stroke="#9aa6b9" stroke-width="1.5" marker-end="url(#arrow)" />
-                    <line x1="75" y1="104" x2="115" y2="126" stroke="#9aa6b9" stroke-width="1.5" marker-end="url(#arrow)" />
-
-                    <defs>
-                        <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                            <path d="M0,0 L8,3 L0,6" fill="#9aa6b9" />
-                        </marker>
-                    </defs>
-                </svg>
-                <div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:4px;">源数据流：索引 → 模块页 → 看板</div>
-            </div>
-        </div>
-
-        <!-- ===== 4. 甘特图 Gantt Chart ===== -->
-        <div class="panel">
-            <div class="panel-header">
-                <h2>📊 甘特图</h2>
-                <span class="tag">Gantt</span>
-            </div>
-            <div class="panel-body">
-                <div class="gantt-row">
-                    <span class="label">机械臂控制</span>
-                    <div class="gantt-track"><div class="gantt-bar" style="width:60%"></div></div>
-                    <span style="font-size:12px;color:var(--text-secondary);width:40px;text-align:right;">Q1</span>
-                </div>
-                <div class="gantt-row">
-                    <span class="label">仿真机械臂</span>
-                    <div class="gantt-track"><div class="gantt-bar orange" style="width:45%"></div></div>
-                    <span style="font-size:12px;color:var(--text-secondary);width:40px;text-align:right;">Q1‑Q2</span>
-                </div>
-                <div class="gantt-row">
-                    <span class="label">VLM 定位</span>
-                    <div class="gantt-track"><div class="gantt-bar green" style="width:30%"></div></div>
-                    <span style="font-size:12px;color:var(--text-secondary);width:40px;text-align:right;">Q2</span>
-                </div>
-                <div class="gantt-row">
-                    <span class="label">CI Pages</span>
-                    <div class="gantt-track"><div class="gantt-bar purple" style="width:20%"></div></div>
-                    <span style="font-size:12px;color:var(--text-secondary);width:40px;text-align:right;">Q2</span>
-                </div>
-                <div class="gantt-row">
-                    <span class="label">Demo 路线图</span>
-                    <div class="gantt-track"><div class="gantt-bar" style="width:15%;background:var(--accent-orange);"></div></div>
-                    <span style="font-size:12px;color:var(--text-secondary);width:40px;text-align:right;">Q3</span>
-                </div>
-                <div class="missing-note">时间范围基于源推断，具体起止日期 source not explicit。</div>
-            </div>
-        </div>
-
-        <!-- ===== 5. 模型 Benchmark 比较 ===== -->
-        <div class="panel">
-            <div class="panel-header">
-                <h2>📐 Benchmark 比较</h2>
-                <span class="tag">Benchmark</span>
-            </div>
-            <div class="panel-body">
-                <div class="bench-bar">
-                    <span class="label">模型 A</span>
-                    <div class="track"><div class="fill" style="width:78%">78</div></div>
-                </div>
-                <div class="bench-bar">
-                    <span class="label">模型 B</span>
-                    <div class="track"><div class="fill" style="width:64%;background:var(--accent-purple);">64</div></div>
-                </div>
-                <div class="bench-bar">
-                    <span class="label">模型 C</span>
-                    <div class="track"><div class="fill" style="width:52%;background:var(--accent-orange);">52</div></div>
-                </div>
-                <div class="bench-bar">
-                    <span class="label">模型 D</span>
-                    <div class="track"><div class="fill" style="width:41%;background:var(--accent-green);">41</div></div>
-                </div>
-                <div class="missing-note">模型名称与分数 source not explicit，示例值仅用于展示框架。</div>
-            </div>
-        </div>
-
-        <!-- ===== 6. 雷达图 Radar Chart ===== -->
-        <div class="panel">
-            <div class="panel-header">
-                <h2>🕸️ 雷达图</h2>
-                <span class="tag">Radar</span>
-            </div>
-            <div class="panel-body">
-                <div class="radar-wrap">
-                    <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                        <!-- grid circles -->
-                        <circle cx="100" cy="100" r="80" fill="none" stroke="#e8eaed" stroke-width="1" />
-                        <circle cx="100" cy="100" r="55" fill="none" stroke="#e8eaed" stroke-width="1" />
-                        <circle cx="100" cy="100" r="30" fill="none" stroke="#e8eaed" stroke-width="1" />
-                        <!-- axes -->
-                        <line x1="100" y1="20" x2="100" y2="180" stroke="#d0d5dd" stroke-width="0.8" />
-                        <line x1="20" y1="100" x2="180" y2="100" stroke="#d0d5dd" stroke-width="0.8" />
-                        <line x1="44" y1="44" x2="156" y2="156" stroke="#d0d5dd" stroke-width="0.8" />
-                        <line x1="156" y1="44" x2="44" y2="156" stroke="#d0d5dd" stroke-width="0.8" />
-                        <!-- polygon (data) -->
-                        <polygon points="100,30 155,60 155,140 100,170 45,140 45,60" fill="rgba(43,108,246,0.15)" stroke="#2b6cf6" stroke-width="2" stroke-linejoin="round" />
-                        <!-- dimension labels -->
-                        <text x="100" y="14" text-anchor="middle" font-size="10" fill="#5e6c84">控制</text>
-                        <text x="100" y="192" text-anchor="middle" font-size="10" fill="#5e6c84">感知</text>
-                        <text x="14" y="103" text-anchor="middle" font-size="10" fill="#5e6c84">仿真</text>
-                        <text x="186" y="103" text-anchor="middle" font-size="10" fill="#5e6c84">集成</text>
-                        <text x="36" y="38" text-anchor="middle" font-size="10" fill="#5e6c84">CI</text>
-                        <text x="164" y="38" text-anchor="middle" font-size="10" fill="#5e6c84">Demo</text>
-                        <!-- center label -->
-                        <text x="100" y="104" text-anchor="middle" font-size="11" fill="#1e2a3a" font-weight="500">能力</text>
-                    </svg>
-                </div>
-                <div class="missing-note" style="text-align:center;">维度与评分 source not explicit，展示雷达框架。</div>
-            </div>
-        </div>
-
-        <!-- ===== 7. 任务负责人卡片 Task Owner ===== -->
-        <div class="panel">
-            <div class="panel-header">
-                <h2>👤 任务负责人</h2>
-                <span class="tag">Owners</span>
-            </div>
-            <div class="panel-body">
-                <div class="task-card">
-                    <div class="avatar">张</div>
-                    <div class="info">
-                        <div class="name">张千</div>
-                        <div class="role">机械臂控制 · 负责人</div>
-                        <div class="meta">source not explicit</div>
-                    </div>
-                    <span class="status-tag status-blue">进行中</span>
-                </div>
-                <div class="task-card">
-                    <div class="avatar">李</div>
-                    <div class="info">
-                        <div class="name">李思</div>
-                        <div class="role">仿真机械臂 · 负责人</div>
-                        <div class="meta">source not explicit</div>
-                    </div>
-                    <span class="status-tag status-orange">待更新</span>
-                </div>
-                <div class="task-card">
-                    <div class="avatar">王</div>
-                    <div class="info">
-                        <div class="name">王益</div>
-                        <div class="role">VLM 测试点定位 · 负责人</div>
-                        <div class="meta">source not explicit</div>
-                    </div>
-                    <span class="status-tag status-green">已完成</span>
-                </div>
-                <div class="task-card">
-                    <div class="avatar">陈</div>
-                    <div class="info">
-                        <div class="name">陈远</div>
-                        <div class="role">GitHub CI · 负责人</div>
-                        <div class="meta">source not explicit</div>
-                    </div>
-                    <span class="status-tag status-gray">待指派</span>
-                </div>
-                <div class="missing-note">姓名、角色、状态均为示例，源未明确具体负责人。</div>
-            </div>
-        </div>
-
-        <!-- ===== 8. 风险状态表 Risk ===== -->
-        <div class="panel">
-            <div class="panel-header">
-                <h2>⚠️ 风险状态</h2>
-                <span class="tag">Risk</span>
-            </div>
-            <div class="panel-body">
-                <table class="compact-table risk-table">
-                    <thead>
-                        <tr><th>风险项</th><th>等级</th><th>状态</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="risk-desc">机械臂控制 接口延迟</span></td>
-                            <td><span class="status-tag status-orange">中</span></td>
-                            <td><span class="status-tag status-blue">监控中</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="risk-desc">仿真环境兼容性</span></td>
-                            <td><span class="status-tag status-green">低</span></td>
-                            <td><span class="status-tag status-green">已缓解</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="risk-desc">VLM 测试点精度</span></td>
-                            <td><span class="status-tag status-red">高</span></td>
-                            <td><span class="status-tag status-red">未关闭</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="risk-desc">CI 部署超时</span></td>
-                            <td><span class="status-tag status-orange">中</span></td>
-                            <td><span class="status-tag status-orange">待优化</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="risk-desc">Demo 路线图 依赖未对齐</span></td>
-                            <td><span class="status-tag status-orange">中</span></td>
-                            <td><span class="status-tag status-gray">source not explicit</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="missing-note">风险等级与详情基于源推断，部分标注 source not explicit。</div>
-            </div>
-        </div>
-
-        <!-- ===== 9. 主题导航 (占整行) ===== -->
-        <div class="panel full-width">
-            <div class="panel-header">
-                <h2>📂 主题导航</h2>
-                <span class="tag">Navigation · 7 模块</span>
-            </div>
-            <div class="panel-body">
-                <div class="topic-grid">
-                    <a href="modules/机械臂控制.html">🦾 机械臂控制 <span class="ext">HTML</span></a>
-                    <a href="modules/仿真机械臂.html">🧪 仿真机械臂 <span class="ext">HTML</span></a>
-                    <a href="modules/VLM测试点定位.html">🔍 VLM 测试点定位 <span class="ext">HTML</span></a>
-                    <a href="modules/GitHub_CI_Pages.html">⚙️ GitHub CI Pages <span class="ext">HTML</span></a>
-                    <a href="modules/Demo_路线图.html">🗺️ Demo 路线图 <span class="ext">HTML</span></a>
-                    <a href="modules/模型_Benchmark.html">📊 模型 Benchmark <span class="ext">HTML</span></a>
-                    <a href="modules/项目通用事项.html">📌 项目通用事项 <span class="ext">HTML</span></a>
-                </div>
-                <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border-fine);font-size:13px;color:var(--text-secondary);display:flex;gap:24px;flex-wrap:wrap;">
-                    <span>📄 <a href="overall-summary.html" style="color:var(--accent-blue);text-decoration:none;">会议总览 HTML</a></span>
-                    <span>📝 <a href="overall-summary.md" style="color:var(--accent-blue);text-decoration:none;">会议总览 Markdown</a></span>
-                    <span style="color:var(--text-muted);">索引更新于 2026‑06‑03</span>
-                </div>
-            </div>
-        </div>
-
-    </div><!-- /.dashboard-grid -->
-
-    <!-- footer -->
-    <div style="margin-top:28px;padding:16px 0 8px 0;border-top:1px solid var(--border-light);text-align:center;font-size:13px;color:var(--text-muted);">
-        会议知识库 · 项目管理看板 &nbsp;|&nbsp; 数据源：index.md &nbsp;|&nbsp; 标注 “source not explicit” 表示源未明确
-    </div>
-
-</div><!-- /.page-wrap -->
+    <section class="section">
+      <h2>功能模块</h2>
+      <div class="section-body">
+        <table>
+          <thead><tr><th>模块</th><th>Markdown</th><th>状态</th></tr></thead>
+          <tbody><tr>
+      <td><a href="modules/Demo_%E8%B7%AF%E7%BA%BF%E5%9B%BE.html">Demo 路线图</a></td>
+      <td><a href="modules/Demo_%E8%B7%AF%E7%BA%BF%E5%9B%BE.md">Markdown</a></td>
+      <td>stable</td>
+    </tr><tr>
+      <td><a href="modules/GitHub_CI_Pages.html">GitHub CI Pages</a></td>
+      <td><a href="modules/GitHub_CI_Pages.md">Markdown</a></td>
+      <td>stable</td>
+    </tr><tr>
+      <td><a href="modules/VLM%E6%B5%8B%E8%AF%95%E7%82%B9%E5%AE%9A%E4%BD%8D.html">VLM测试点定位</a></td>
+      <td><a href="modules/VLM%E6%B5%8B%E8%AF%95%E7%82%B9%E5%AE%9A%E4%BD%8D.md">Markdown</a></td>
+      <td>stable</td>
+    </tr><tr>
+      <td><a href="modules/%E4%BB%BF%E7%9C%9F%E6%9C%BA%E6%A2%B0%E8%87%82.html">仿真机械臂</a></td>
+      <td><a href="modules/%E4%BB%BF%E7%9C%9F%E6%9C%BA%E6%A2%B0%E8%87%82.md">Markdown</a></td>
+      <td>stable</td>
+    </tr><tr>
+      <td><a href="modules/%E6%9C%BA%E6%A2%B0%E8%87%82%E6%8E%A7%E5%88%B6.html">机械臂控制</a></td>
+      <td><a href="modules/%E6%9C%BA%E6%A2%B0%E8%87%82%E6%8E%A7%E5%88%B6.md">Markdown</a></td>
+      <td>stable</td>
+    </tr><tr>
+      <td><a href="modules/%E6%A8%A1%E5%9E%8B_Benchmark.html">模型 Benchmark</a></td>
+      <td><a href="modules/%E6%A8%A1%E5%9E%8B_Benchmark.md">Markdown</a></td>
+      <td>stable</td>
+    </tr><tr>
+      <td><a href="modules/%E9%A1%B9%E7%9B%AE%E9%80%9A%E7%94%A8%E4%BA%8B%E9%A1%B9.html">项目通用事项</a></td>
+      <td><a href="modules/%E9%A1%B9%E7%9B%AE%E9%80%9A%E7%94%A8%E4%BA%8B%E9%A1%B9.md">Markdown</a></td>
+      <td>stable</td>
+    </tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
 </body>
 </html>

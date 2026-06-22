@@ -36,6 +36,33 @@ export const CANONICAL_SUMMARY_BASE = 'summary';
 /** Sidecar filename for topic hints and suggested titles (replaces legacy *.metadata.json). */
 export const TOPIC_SIDECAR_NAME = 'topic_candidates.json';
 
+/** Fixed section order for meeting-knowledge Topic module pages (Markdown + HTML). */
+export const TOPIC_MODULE_SECTIONS = [
+  { title: '一句话摘要', fallback: '原文未明确。' },
+  { title: '模块目标', aliases: ['Topic 目标'], fallback: '原文未明确。' },
+  { title: '相关会议', aliases: ['相关会议来源'], fallback: '- 原文未明确' },
+  { title: '当前状态', fallback: '原文未明确。' },
+  {
+    title: '已确认事项',
+    fallback: '| 事项 | 确认结果 |\n|------|----------|\n| 原文未明确 | 原文未明确 |'
+  },
+  {
+    title: '待办事项',
+    fallback: '| 任务 | 负责人 | 截止时间 | 优先级 |\n|------|--------|----------|--------|\n| 原文未明确 | 原文未明确 | 原文未明确 | 原文未明确 |'
+  },
+  {
+    title: '负责人与时间表',
+    fallback: '| 事项 | 负责人 | 截止时间 | 状态 |\n|------|--------|----------|------|\n| 原文未明确 | 原文未明确 | 原文未明确 | 原文未明确 |'
+  },
+  {
+    title: '风险或未解决问题',
+    aliases: ['风险问题', '风险与问题'],
+    fallback: '- 原文未明确'
+  },
+  { title: 'Demo 影响', fallback: '原文未明确。' },
+  { title: '最近变化', fallback: '- 原文未明确' }
+];
+
 /** @deprecated Fallback when ontology.json is missing; prefer topic-ontology/ontology.json. */
 export const kpitMeetingTopics = [
   { name: '机械臂控制', scope: '真实机械臂接口、坐标格式、夹具、误差、移动策略' },

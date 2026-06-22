@@ -1,973 +1,245 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>仿真机械臂 · 项目总览</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: #F5F6FA;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
-            color: #1F2A44;
-            padding: 24px 32px 64px;
-            line-height: 1.5;
-        }
-        .page {
-            max-width: 1360px;
-            margin: 0 auto;
-        }
-
-        /* ---- 头部 ---- */
-        .header {
-            background: #fff;
-            border-radius: 12px;
-            padding: 28px 32px 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            border: 1px solid #E8E9ED;
-            margin-bottom: 24px;
-        }
-        .header h1 {
-            font-size: 26px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .header h1 span {
-            background: #3370FF;
-            color: #fff;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 2px 12px;
-            border-radius: 20px;
-            letter-spacing: 0;
-        }
-        .header .goal {
-            margin-top: 10px;
-            color: #4A5568;
-            font-size: 15px;
-            padding: 12px 16px;
-            background: #F0F4FF;
-            border-radius: 8px;
-            border-left: 4px solid #3370FF;
-        }
-        .header-meta {
-            display: flex;
-            gap: 28px;
-            margin-top: 14px;
-            font-size: 14px;
-            color: #6B7280;
-            flex-wrap: wrap;
-        }
-        .header-meta strong {
-            color: #1F2A44;
-        }
-
-        /* ---- 主题导航 ---- */
-        .topic-nav {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 12px;
-            margin-bottom: 28px;
-            background: #fff;
-            border-radius: 12px;
-            padding: 20px 24px;
-            border: 1px solid #E8E9ED;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-        }
-        .topic-nav a {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 4px;
-            background: #F7F8FC;
-            border-radius: 10px;
-            text-decoration: none;
-            color: #1F2A44;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.15s;
-            border: 1px solid transparent;
-            gap: 4px;
-        }
-        .topic-nav a:hover {
-            background: #EEF2FF;
-            border-color: #3370FF44;
-        }
-        .topic-nav a .emoji {
-            font-size: 22px;
-            margin-bottom: 2px;
-        }
-
-        /* ---- 模块通用 ---- */
-        .module {
-            background: #fff;
-            border-radius: 12px;
-            border: 1px solid #E8E9ED;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-            padding: 20px 24px 24px;
-            margin-bottom: 24px;
-        }
-        .module h2 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .module h2 .badge {
-            font-size: 12px;
-            font-weight: 400;
-            background: #F0F4FF;
-            color: #3370FF;
-            padding: 0 12px;
-            border-radius: 20px;
-            line-height: 22px;
-        }
-        .module .src-missing {
-            color: #9CA3AF;
-            font-style: italic;
-            font-size: 13px;
-        }
-        .grid-2col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-        .grid-3col {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 16px;
-        }
-        @media (max-width: 860px) {
-            .grid-2col,
-            .grid-3col {
-                grid-template-columns: 1fr;
-            }
-            body {
-                padding: 16px;
-            }
-        }
-
-        /* ---- 标签、状态 ---- */
-        .tag {
-            display: inline-block;
-            font-size: 12px;
-            padding: 1px 12px;
-            border-radius: 20px;
-            font-weight: 500;
-            line-height: 22px;
-        }
-        .tag-green {
-            background: #E6F7E6;
-            color: #1A7D36;
-        }
-        .tag-orange {
-            background: #FFF3E0;
-            color: #B76E00;
-        }
-        .tag-red {
-            background: #FFEBEE;
-            color: #C62828;
-        }
-        .tag-blue {
-            background: #E3EEFF;
-            color: #1A56DB;
-        }
-        .tag-gray {
-            background: #F0F0F5;
-            color: #6B7280;
-        }
-
-        /* ---- 时间线 ---- */
-        .timeline {
-            position: relative;
-            padding-left: 28px;
-        }
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 8px;
-            top: 4px;
-            bottom: 4px;
-            width: 2px;
-            background: #DEE0E6;
-            border-radius: 2px;
-        }
-        .tl-item {
-            position: relative;
-            padding-bottom: 18px;
-            font-size: 14px;
-        }
-        .tl-item:last-child {
-            padding-bottom: 0;
-        }
-        .tl-item::before {
-            content: '';
-            position: absolute;
-            left: -24px;
-            top: 6px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #3370FF;
-            border: 2px solid #fff;
-            box-shadow: 0 0 0 2px #3370FF;
-        }
-        .tl-item .tl-date {
-            font-weight: 600;
-            font-size: 13px;
-            color: #3370FF;
-        }
-        .tl-item .tl-desc {
-            color: #374151;
-            margin-top: 2px;
-        }
-        .tl-item .tl-tag {
-            margin-left: 8px;
-        }
-
-        /* ---- 路线图 ---- */
-        .roadmap {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            padding-top: 4px;
-        }
-        .rm-step {
-            flex: 1 1 140px;
-            background: #F7F8FC;
-            border-radius: 10px;
-            padding: 14px 12px 12px;
-            border-left: 4px solid #3370FF;
-            min-width: 120px;
-        }
-        .rm-step .rm-title {
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .rm-step .rm-status {
-            font-size: 12px;
-            margin-top: 4px;
-        }
-        .rm-step .rm-desc {
-            font-size: 13px;
-            color: #4B5563;
-            margin-top: 4px;
-        }
-        .rm-step.done {
-            border-left-color: #34C759;
-            background: #F0FDF0;
-        }
-        .rm-step.active {
-            border-left-color: #3370FF;
-            background: #F0F4FF;
-        }
-        .rm-step.pending {
-            border-left-color: #D1D5DB;
-            background: #FAFAFB;
-        }
-
-        /* ---- 流程图 ---- */
-        .flowchart-svg {
-            display: flex;
-            justify-content: center;
-            padding: 8px 0;
-        }
-        .flowchart-svg svg {
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* ---- 甘特图 ---- */
-        .gantt-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            margin-top: 4px;
-        }
-        .gantt-table th {
-            text-align: left;
-            padding: 8px 10px;
-            background: #F7F8FC;
-            font-weight: 500;
-            color: #4B5563;
-            border-bottom: 1px solid #E8E9ED;
-            font-size: 12px;
-        }
-        .gantt-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #F0F0F5;
-            vertical-align: middle;
-        }
-        .gantt-bar-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .gantt-bar {
-            height: 14px;
-            border-radius: 6px;
-            min-width: 6px;
-            background: #3370FF;
-            position: relative;
-        }
-        .gantt-bar.high {
-            background: #3370FF;
-        }
-        .gantt-bar.medium {
-            background: #FF9500;
-        }
-        .gantt-bar.low {
-            background: #34C759;
-        }
-        .gantt-bar .gantt-label {
-            position: absolute;
-            left: 100%;
-            margin-left: 8px;
-            white-space: nowrap;
-            font-size: 11px;
-            color: #6B7280;
-        }
-
-        /* ---- Benchmark 条形图 ---- */
-        .bench-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px 24px;
-            padding: 4px 0;
-        }
-        .bench-item .bench-label {
-            font-size: 13px;
-            font-weight: 500;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
-        }
-        .bench-item .bench-bar-bg {
-            height: 10px;
-            background: #EEEEF4;
-            border-radius: 6px;
-            overflow: hidden;
-            position: relative;
-        }
-        .bench-item .bench-bar-fill {
-            height: 100%;
-            border-radius: 6px;
-            background: #3370FF;
-            transition: width 0.2s;
-        }
-        .bench-item .bench-bar-fill.target {
-            background: #34C759;
-            opacity: 0.6;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        .bench-item .bench-bar-target {
-            position: absolute;
-            top: -2px;
-            bottom: -2px;
-            width: 2px;
-            background: #34C759;
-            z-index: 2;
-        }
-        .bench-item .bench-values {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #6B7280;
-            margin-top: 2px;
-        }
-
-        /* ---- 雷达图 ---- */
-        .radar-wrap {
-            display: flex;
-            justify-content: center;
-            padding: 8px 0;
-        }
-        .radar-wrap svg {
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* ---- 任务卡片 ---- */
-        .task-card {
-            background: #F7F8FC;
-            border-radius: 10px;
-            padding: 14px 16px;
-            border: 1px solid #EBECF0;
-            transition: box-shadow 0.1s;
-        }
-        .task-card .task-title {
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 6px;
-        }
-        .task-card .task-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px 12px;
-            font-size: 13px;
-            color: #4B5563;
-            margin-top: 6px;
-        }
-        .task-card .task-meta strong {
-            font-weight: 500;
-            color: #1F2A44;
-        }
-
-        /* ---- 风险表 ---- */
-        .risk-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        .risk-table th {
-            text-align: left;
-            padding: 10px 12px;
-            background: #F7F8FC;
-            font-weight: 500;
-            color: #4B5563;
-            border-bottom: 1px solid #E8E9ED;
-            font-size: 12px;
-        }
-        .risk-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #F0F0F5;
-            vertical-align: top;
-        }
-        .risk-table .risk-level {
-            font-weight: 500;
-        }
-
-        /* ---- 内联补丁 ---- */
-        .text-muted {
-            color: #9CA3AF;
-            font-size: 13px;
-        }
-        .mt-8 {
-            margin-top: 8px;
-        }
-        .flex-center {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .gap-4 {
-            gap: 4px;
-        }
-        .gap-8 {
-            gap: 8px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>仿真机械臂 · Topic 知识库</title>
+  <style>
+:root {
+  --bg: #f0f2f5;
+  --panel: #ffffff;
+  --text: #1f2a3a;
+  --muted: #5f6b7a;
+  --border: #e8eaed;
+  --accent: #3370ff;
+  --accent-soft: #f0f5ff;
+  --risk: #cf1322;
+  --risk-bg: #fff1f0;
+  --new: #08979c;
+  --new-bg: #e6fffb;
+  --updated: #d48806;
+  --updated-bg: #fffbe6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+}
+.page { max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
+.top-bar {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.top-bar h1 { margin: 0 0 6px; font-size: 22px; font-weight: 600; }
+.top-bar .meta { color: var(--muted); font-size: 13px; }
+.topic-nav {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 14px;
+}
+.topic-nav a {
+  text-decoration: none;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+.topic-nav a:hover, .topic-nav a.active {
+  color: var(--accent);
+  border-color: #cfe0ff;
+  background: var(--accent-soft);
+}
+.section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.section h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.section-body { font-size: 14px; }
+.section-body table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.section-body th, .section-body td {
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+.section-body th { background: #f6f8fa; font-weight: 600; }
+.section-body ul { margin: 0; padding-left: 20px; }
+.section-body p { margin: 0 0 8px; }
+.section-body p:last-child { margin-bottom: 0; }
+.change-new { color: var(--new); background: var(--new-bg); padding: 1px 6px; border-radius: 4px; }
+.change-updated { color: var(--updated); background: var(--updated-bg); padding: 1px 6px; border-radius: 4px; }
+.change-risk { color: var(--risk); background: var(--risk-bg); padding: 1px 6px; border-radius: 4px; }
+.footer { color: var(--muted); font-size: 12px; margin-top: 8px; }
+</style>
 </head>
 <body>
-    <div class="page">
+  <div class="page">
+    <header class="top-bar">
+      <h1>仿真机械臂</h1>
+      <p class="meta">KPIT Topic 模块 · 更新时间 2026-06-22T09:04:22.334Z</p>
+      <nav class="topic-nav" aria-label="Topic 导航">
+        <a href="../index.html">知识库索引</a>
+        <a href="../../index.html">输出总目录</a>
+        <a href="Demo_%E8%B7%AF%E7%BA%BF%E5%9B%BE.html" class="">Demo 路线图</a><a href="GitHub_CI_Pages.html" class="">GitHub CI Pages</a><a href="VLM%E6%B5%8B%E8%AF%95%E7%82%B9%E5%AE%9A%E4%BD%8D.html" class="">VLM测试点定位</a><a href="%E4%BB%BF%E7%9C%9F%E6%9C%BA%E6%A2%B0%E8%87%82.html" class="active">仿真机械臂</a><a href="%E6%9C%BA%E6%A2%B0%E8%87%82%E6%8E%A7%E5%88%B6.html" class="">机械臂控制</a><a href="%E6%A8%A1%E5%9E%8B_Benchmark.html" class="">模型 Benchmark</a><a href="%E9%A1%B9%E7%9B%AE%E9%80%9A%E7%94%A8%E4%BA%8B%E9%A1%B9.html" class="">项目通用事项</a>
+      </nav>
+    </header>
+    
+<section class="section" id="一句话摘要">
+  <h2>一句话摘要</h2>
+  <div class="section-body"><p>原文未明确。</p></div>
+</section>
 
-        <!-- ============ 头部 ============ -->
-        <header class="header">
-            <h1>
-                🦾 仿真机械臂
-                <span>项目总览</span>
-            </h1>
-            <div class="goal">
-                🎯 在仿真环境（Isaac Sim 或其它平台）中实现机械臂的路径规划、运动控制、避障验证，作为实体机械臂的补充，加速算法调试与流程验证。
-            </div>
-            <div class="header-meta">
-                <span><strong>当前状态</strong> 已可移动 · 误差 4mm（目标 0.05mm）</span>
-                <span><strong>关节独立运动</strong> ✅ 已完成</span>
-                <span><strong>路径规划</strong> 固定先 Z 后 XY</span>
-                <span><strong>最近会议</strong> 2026-05-22</span>
-            </div>
-        </header>
+<section class="section" id="模块目标">
+  <h2>模块目标</h2>
+  <div class="section-body"><p>在仿真环境（Isaac Sim 或其它平台）中实现机械臂的路径规划、运动控制、避障验证，作为实体机械臂的补充，加速算法调试与流程验证。</p></div>
+</section>
 
-        <!-- ============ 主题导航 ============ -->
-        <nav class="topic-nav" id="topic-nav">
-            <a href="#timeline"><span class="emoji">📅</span>时间线</a>
-            <a href="#roadmap"><span class="emoji">🗺️</span>路线图</a>
-            <a href="#flowchart"><span class="emoji">🔁</span>流程图</a>
-            <a href="#gantt"><span class="emoji">📊</span>甘特图</a>
-            <a href="#benchmark"><span class="emoji">📈</span>Benchmark</a>
-            <a href="#radar"><span class="emoji">🕸️</span>雷达图</a>
-            <a href="#tasks"><span class="emoji">📋</span>任务卡片</a>
-            <a href="#risks"><span class="emoji">⚠️</span>风险表</a>
-        </nav>
+<section class="section" id="相关会议">
+  <h2>相关会议</h2>
+  <div class="section-body"><ul>
+<li>2026-05-08 上午：项目进展与分工</li>
+<li>2026-05-12 下午：机械臂工作讨论</li>
+<li>2026-05-15 上午：机械臂仿真与测试流程对接</li>
+<li>2026-05-15 下午：模型界面与精度讨论</li>
+<li>2026-05-22 上午：项目流程测试点讨论</li>
+</ul></div>
+</section>
 
-        <!-- ============ 时间线 + 路线图 ============ -->
-        <div class="grid-2col">
-            <!-- 时间线 -->
-            <div class="module" id="timeline">
-                <h2>📅 时间线 <span class="badge">会议 & 里程碑</span></h2>
-                <div class="timeline">
-                    <div class="tl-item">
-                        <div class="tl-date">2026-05-08 上午</div>
-                        <div class="tl-desc">项目进展与分工 会议</div>
-                    </div>
-                    <div class="tl-item">
-                        <div class="tl-date">2026-05-12 下午</div>
-                        <div class="tl-desc">机械臂工作讨论 · <span class="tag tag-green">关节独立运动完成</span></div>
-                    </div>
-                    <div class="tl-item">
-                        <div class="tl-date">2026-05-15 上午</div>
-                        <div class="tl-desc">机械臂仿真与测试流程对接 会议</div>
-                    </div>
-                    <div class="tl-item">
-                        <div class="tl-date">2026-05-15 下午</div>
-                        <div class="tl-desc">模型界面与精度讨论 会议</div>
-                    </div>
-                    <div class="tl-item">
-                        <div class="tl-date">2026-05-22 上午</div>
-                        <div class="tl-desc">项目流程测试点讨论 会议</div>
-                    </div>
-                    <div class="tl-item">
-                        <div class="tl-date">2026-06-02</div>
-                        <div class="tl-desc"><span class="tag tag-blue">新增</span> 明确仿真环境测试策略：先画架构图，理解差异，再设计用例</div>
-                    </div>
-                    <div class="tl-item">
-                        <div class="tl-date">2026-06-04（周五）</div>
-                        <div class="tl-desc"><span class="tag tag-orange">截止</span> 梳理协议栈架构、workflow、各层 IO</div>
-                    </div>
-                </div>
-                <div class="text-muted mt-8">📌 最近变化：Pro 与 Light 区别已明确，架构层级细节待梳理</div>
-            </div>
+<section class="section" id="当前状态">
+  <h2>当前状态</h2>
+  <div class="section-body"><p>仿真机械臂已可移动，但误差较大（4mm，目标0.05mm）。关节独立运动问题已解决，但缺少两个连杆（不影响运动）。仿真环境当前使用WSL两个终端进行DDS通讯，但未画出完整架构图。路径规划采用固定顺序（先Z后XY），暂未实现智能规划。</p></div>
+</section>
 
-            <!-- 路线图 -->
-            <div class="module" id="roadmap">
-                <h2>🗺️ 路线图 <span class="badge">阶段规划</span></h2>
-                <div class="roadmap">
-                    <div class="rm-step done">
-                        <div class="rm-title">基础搭建</div>
-                        <div class="rm-status"><span class="tag tag-green">已完成</span></div>
-                        <div class="rm-desc">机械臂可移动 · 关节独立运动</div>
-                    </div>
-                    <div class="rm-step active">
-                        <div class="rm-title">精度优化</div>
-                        <div class="rm-status"><span class="tag tag-orange">进行中</span></div>
-                        <div class="rm-desc">降低误差 4mm → 0.05mm</div>
-                    </div>
-                    <div class="rm-step active">
-                        <div class="rm-title">架构梳理</div>
-                        <div class="rm-status"><span class="tag tag-orange">进行中</span></div>
-                        <div class="rm-desc">画架构图 · 梳理协议栈 · 差异分析</div>
-                    </div>
-                    <div class="rm-step pending">
-                        <div class="rm-title">智能规划</div>
-                        <div class="rm-status"><span class="tag tag-gray">待开始</span></div>
-                        <div class="rm-desc">实现智能路径规划</div>
-                    </div>
-                    <div class="rm-step pending">
-                        <div class="rm-title">完整验证</div>
-                        <div class="rm-status"><span class="tag tag-gray">待开始</span></div>
-                        <div class="rm-desc">Benchmark · 避障验证</div>
-                    </div>
-                </div>
-                <div class="text-muted mt-8">📌 当前路径规划策略：固定先 Z 后 XY 再降 Z（暂未智能规划）</div>
-            </div>
-        </div>
+<section class="section" id="已确认事项">
+  <h2>已确认事项</h2>
+  <div class="section-body"><table>
+<thead><tr>
+<th>事项</th>
+<th>确认结果</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>仿真机械臂可移动，误差4mm</td>
+<td>已验证</td>
+</tr>
+<tr>
+<td>关节独立运动功能可用</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>当前路径规划策略：固定先Z后XY再降Z</td>
+<td>已确认</td>
+</tr>
+<tr>
+<td>仿真环境与真实产品差异：仿真从Linux底层开始，真实硬件有BSP等</td>
+<td>已明确</td>
+</tr>
+</tbody></table></div>
+</section>
 
-        <!-- ============ 流程图 ============ -->
-        <div class="module" id="flowchart">
-            <h2>🔁 工作流程图 <span class="badge">仿真环境当前架构</span></h2>
-            <div class="flowchart-svg">
-                <svg viewBox="0 0 720 340" width="720" height="340" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
-                    <!-- 背景 -->
-                    <rect x="0" y="0" width="720" height="340" fill="none" />
-                    <!-- WSL 终端1 -->
-                    <rect x="30" y="40" width="150" height="56" rx="10" fill="#F0F4FF" stroke="#3370FF" stroke-width="1.5" />
-                    <text x="105" y="72" text-anchor="middle" font-size="14" font-weight="600" fill="#1F2A44">WSL 终端 1</text>
-                    <text x="105" y="88" text-anchor="middle" font-size="11" fill="#6B7280">DDS 发布端</text>
-                    <!-- 箭头 -->
-                    <line x1="180" y1="68" x2="230" y2="68" stroke="#3370FF" stroke-width="2" marker-end="url(#arrowBlue)" />
-                    <defs>
-                        <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-                            <path d="M0,0 L8,4 L0,8 Z" fill="#3370FF" />
-                        </marker>
-                        <marker id="arrowGray" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-                            <path d="M0,0 L8,4 L0,8 Z" fill="#9CA3AF" />
-                        </marker>
-                    </defs>
-                    <!-- DDS 通讯 -->
-                    <rect x="230" y="24" width="120" height="88" rx="12" fill="#E8F5E9" stroke="#34C759" stroke-width="1.5" stroke-dasharray="5,3" />
-                    <text x="290" y="58" text-anchor="middle" font-size="13" font-weight="600" fill="#1F2A44">DDS 通讯</text>
-                    <text x="290" y="76" text-anchor="middle" font-size="11" fill="#4B5563">中间件</text>
-                    <text x="290" y="92" text-anchor="middle" font-size="10" fill="#9CA3AF">WSL 双终端</text>
-                    <!-- 箭头 -->
-                    <line x1="350" y1="68" x2="400" y2="68" stroke="#3370FF" stroke-width="2" marker-end="url(#arrowBlue)" />
-                    <!-- WSL 终端2 -->
-                    <rect x="400" y="40" width="150" height="56" rx="10" fill="#F0F4FF" stroke="#3370FF" stroke-width="1.5" />
-                    <text x="475" y="72" text-anchor="middle" font-size="14" font-weight="600" fill="#1F2A44">WSL 终端 2</text>
-                    <text x="475" y="88" text-anchor="middle" font-size="11" fill="#6B7280">DDS 订阅端</text>
-                    <!-- 箭头 -->
-                    <line x1="550" y1="68" x2="590" y2="68" stroke="#3370FF" stroke-width="2" marker-end="url(#arrowBlue)" />
-                    <!-- 路径规划 -->
-                    <rect x="590" y="16" width="110" height="50" rx="8" fill="#FFF3E0" stroke="#FF9500" stroke-width="1.5" />
-                    <text x="645" y="38" text-anchor="middle" font-size="12" font-weight="600" fill="#1F2A44">路径规划</text>
-                    <text x="645" y="54" text-anchor="middle" font-size="10" fill="#6B7280">固定 先Z后XY</text>
-                    <!-- 箭头向下 -->
-                    <line x1="645" y1="66" x2="645" y2="110" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrowGray)" />
-                    <!-- 关节控制 -->
-                    <rect x="590" y="110" width="110" height="44" rx="8" fill="#E3EEFF" stroke="#1A56DB" stroke-width="1.5" />
-                    <text x="645" y="132" text-anchor="middle" font-size="12" font-weight="600" fill="#1F2A44">关节控制</text>
-                    <text x="645" y="146" text-anchor="middle" font-size="10" fill="#4B5563">独立运动 ✅</text>
-                    <!-- 箭头向下 -->
-                    <line x1="645" y1="154" x2="645" y2="198" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrowGray)" />
-                    <!-- 机械臂运动 -->
-                    <rect x="555" y="198" width="180" height="50" rx="10" fill="#F0FDF0" stroke="#34C759" stroke-width="2" />
-                    <text x="645" y="222" text-anchor="middle" font-size="14" font-weight="600" fill="#1F2A44">🤖 机械臂运动</text>
-                    <text x="645" y="240" text-anchor="middle" font-size="11" fill="#6B7280">当前误差 4mm（目标 0.05mm）</text>
-                    <!-- 反馈回路 -->
-                    <path d="M420,210 Q360,210 360,260 Q360,310 420,310 L570,310" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrowGray)" />
-                    <text x="390" y="286" text-anchor="middle" font-size="10" fill="#9CA3AF">反馈</text>
-                    <!-- 缺失连杆标记 -->
-                    <text x="400" y="330" text-anchor="middle" font-size="11" fill="#9CA3AF">⚠ 缺少两个连杆（不影响运动）</text>
-                </svg>
-            </div>
-            <div class="text-muted mt-8" style="text-align:center;">🔹 仿真环境从 Linux 底层开始，真实硬件有 BSP 等差异 · 架构图待补充</div>
-        </div>
+<section class="section" id="待办事项">
+  <h2>待办事项</h2>
+  <div class="section-body"><table>
+<thead><tr>
+<th>任务</th>
+<th>负责人</th>
+<th>截止时间</th>
+<th>优先级</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>降低仿真机械臂误差至0.05mm</td>
+<td>说话人4</td>
+<td>原文未明确</td>
+<td>中</td>
+</tr>
+<tr>
+<td>画出仿真运行环境架构图（Pro与Light）</td>
+<td>说话人2</td>
+<td>原文未明确</td>
+<td>高</td>
+</tr>
+<tr>
+<td>梳理协议栈架构、workflow、各层IO</td>
+<td>说话人2、3</td>
+<td>2026-06-04（周五）</td>
+<td>高</td>
+</tr>
+<tr>
+<td>分析仿真环境与真实环境差异</td>
+<td>说话人2、3</td>
+<td>原文未明确</td>
+<td>高</td>
+</tr>
+<tr>
+<td>设计正式Benchmark测试用例</td>
+<td>说话人2、3</td>
+<td>原文未明确</td>
+<td>高</td>
+</tr>
+</tbody></table></div>
+</section>
 
-        <!-- ============ 甘特图 ============ -->
-        <div class="module" id="gantt">
-            <h2>📊 甘特图 <span class="badge">任务时间线</span></h2>
-            <table class="gantt-table">
-                <thead>
-                    <tr>
-                        <th style="width:28%;">任务</th>
-                        <th style="width:14%;">负责人</th>
-                        <th style="width:12%;">优先级</th>
-                        <th style="width:12%;">截止时间</th>
-                        <th style="width:34%;">时间条</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>降低仿真机械臂误差至 0.05mm</td>
-                        <td>说话人4</td>
-                        <td><span class="tag tag-orange">中</span></td>
-                        <td class="src-missing">source not explicit</td>
-                        <td>
-                            <div class="gantt-bar-wrap">
-                                <div class="gantt-bar medium" style="width:40%;"></div>
-                                <span class="src-missing">持续进行</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>画出仿真运行环境架构图（Pro 与 Light）</td>
-                        <td>说话人2</td>
-                        <td><span class="tag tag-red">高</span></td>
-                        <td class="src-missing">source not explicit</td>
-                        <td>
-                            <div class="gantt-bar-wrap">
-                                <div class="gantt-bar high" style="width:20%;"></div>
-                                <span class="src-missing">待启动</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>梳理协议栈架构、workflow、各层 IO</td>
-                        <td>说话人2、3</td>
-                        <td><span class="tag tag-red">高</span></td>
-                        <td>2026-06-04</td>
-                        <td>
-                            <div class="gantt-bar-wrap">
-                                <div class="gantt-bar high" style="width:55%;"></div>
-                                <span style="font-size:11px;color:#4B5563;">距截止 2 周</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>分析仿真环境与真实环境差异</td>
-                        <td>说话人2、3</td>
-                        <td><span class="tag tag-red">高</span></td>
-                        <td class="src-missing">source not explicit</td>
-                        <td>
-                            <div class="gantt-bar-wrap">
-                                <div class="gantt-bar high" style="width:15%;"></div>
-                                <span class="src-missing">待启动</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>设计正式 Benchmark 测试用例</td>
-                        <td>说话人2、3</td>
-                        <td><span class="tag tag-red">高</span></td>
-                        <td class="src-missing">source not explicit</td>
-                        <td>
-                            <div class="gantt-bar-wrap">
-                                <div class="gantt-bar high" style="width:10%;"></div>
-                                <span class="src-missing">待启动</span>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="text-muted mt-8" style="text-align:right;">📌 时间轴参考：当前 2026-05-22 · 唯一明确截止 2026-06-04</div>
-        </div>
+<section class="section" id="负责人与时间表">
+  <h2>负责人与时间表</h2>
+  <div class="section-body"><table>
+<thead><tr>
+<th>事项</th>
+<th>负责人</th>
+<th>截止时间</th>
+<th>状态</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>原文未明确</td>
+<td>原文未明确</td>
+<td>原文未明确</td>
+<td>原文未明确</td>
+</tr>
+</tbody></table></div>
+</section>
 
-        <!-- ============ Benchmark + 雷达图 ============ -->
-        <div class="grid-2col">
-            <!-- Benchmark 比较图 -->
-            <div class="module" id="benchmark">
-                <h2>📈 模型 Benchmark 比较 <span class="badge">当前 vs 目标</span></h2>
-                <div class="bench-grid">
-                    <div class="bench-item">
-                        <div class="bench-label">
-                            <span>定位精度</span>
-                            <span>4.00 mm</span>
-                        </div>
-                        <div class="bench-bar-bg">
-                            <div class="bench-bar-fill" style="width:8%;background:#FF3B30;"></div>
-                            <div class="bench-bar-target" style="left:0.1%;"></div>
-                            <div style="position:absolute;right:0;top:-2px;bottom:-2px;width:2px;background:#34C759;"></div>
-                        </div>
-                        <div class="bench-values">
-                            <span style="color:#FF3B30;">当前 4mm</span>
-                            <span style="color:#34C759;">目标 0.05mm</span>
-                        </div>
-                    </div>
-                    <div class="bench-item">
-                        <div class="bench-label">
-                            <span>关节独立运动</span>
-                            <span>✅ 已完成</span>
-                        </div>
-                        <div class="bench-bar-bg">
-                            <div class="bench-bar-fill" style="width:100%;background:#34C759;"></div>
-                        </div>
-                        <div class="bench-values">
-                            <span>当前 完全独立</span>
-                            <span>目标 完全独立 ✅</span>
-                        </div>
-                    </div>
-                    <div class="bench-item">
-                        <div class="bench-label">
-                            <span>路径规划智能性</span>
-                            <span>固定顺序</span>
-                        </div>
-                        <div class="bench-bar-bg">
-                            <div class="bench-bar-fill" style="width:25%;background:#FF9500;"></div>
-                            <div class="bench-bar-target" style="left:90%;"></div>
-                        </div>
-                        <div class="bench-values">
-                            <span style="color:#FF9500;">当前 固定先Z后XY</span>
-                            <span style="color:#34C759;">目标 智能规划</span>
-                        </div>
-                    </div>
-                    <div class="bench-item">
-                        <div class="bench-label">
-                            <span>架构完整度</span>
-                            <span>部分完成</span>
-                        </div>
-                        <div class="bench-bar-bg">
-                            <div class="bench-bar-fill" style="width:30%;background:#FF9500;"></div>
-                            <div class="bench-bar-target" style="left:90%;"></div>
-                        </div>
-                        <div class="bench-values">
-                            <span style="color:#FF9500;">当前 架构图待补充</span>
-                            <span style="color:#34C759;">目标 完整架构</span>
-                        </div>
-                    </div>
-                    <div class="bench-item">
-                        <div class="bench-label">
-                            <span>协议栈梳理</span>
-                            <span>待梳理</span>
-                        </div>
-                        <div class="bench-bar-bg">
-                            <div class="bench-bar-fill" style="width:10%;background:#FF9500;"></div>
-                            <div class="bench-bar-target" style="left:90%;"></div>
-                        </div>
-                        <div class="bench-values">
-                            <span style="color:#FF9500;">当前 未开始</span>
-                            <span style="color:#34C759;">目标 完整梳理</span>
-                        </div>
-                    </div>
-                    <div class="bench-item">
-                        <div class="bench-label">
-                            <span>Benchmark 用例</span>
-                            <span>待设计</span>
-                        </div>
-                        <div class="bench-bar-bg">
-                            <div class="bench-bar-fill" style="width:5%;background:#9CA3AF;"></div>
-                            <div class="bench-bar-target" style="left:90%;"></div>
-                        </div>
-                        <div class="bench-values">
-                            <span style="color:#9CA3AF;">当前 无</span>
-                            <span style="color:#34C759;">目标 正式用例</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-muted mt-8">📌 数据来自会议确认 & 待办事项 · 目标值标记为绿色虚线</div>
-            </div>
+<section class="section" id="风险或未解决问题">
+  <h2>风险或未解决问题</h2>
+  <div class="section-body"><ul>
+<li>&lt;span class=&quot;change-risk&quot;&gt;风险：仿真误差4mm远大于spec 0.05mm，可能无法反映真实情况。&lt;/span&gt;</li>
+<li>&lt;span class=&quot;change-risk&quot;&gt;风险：仿真环境无法真实反映内部处理流程（CPU调度、数据拷贝），测试结果可能无效。&lt;/span&gt;</li>
+<li>&lt;span class=&quot;change-risk&quot;&gt;风险：硬件环境调试时AI工具难以辅助。&lt;/span&gt;</li>
+</ul></div>
+</section>
 
-            <!-- 雷达图 -->
-            <div class="module" id="radar">
-                <h2>🕸️ 能力雷达图 <span class="badge">项目成熟度</span></h2>
-                <div class="radar-wrap">
-                    <svg viewBox="0 0 420 420" width="420" height="420" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
-                        <!-- 五边形网格 × 5层 -->
-                        <defs>
-                            <polygon id="hexPts" points="210,30 378,126 378,294 210,390 42,294 42,126" />
-                        </defs>
-                        <!-- 5层网格 -->
-                        <use href="#hexPts" fill="none" stroke="#E8E9ED" stroke-width="1.2" transform="scale(0.2) translate(840,840)" />
-                        <use href="#hexPts" fill="none" stroke="#E8E9ED" stroke-width="1.2" transform="scale(0.4) translate(315,126)" />
-                        <use href="#hexPts" fill="none" stroke="#E8E9ED" stroke-width="1.2" transform="scale(0.6) translate(140,56)" />
-                        <use href="#hexPts" fill="none" stroke="#E8E9ED" stroke-width="1.2" transform="scale(0.8) translate(52.5,21)" />
-                        <use href="#hexPts" fill="none" stroke="#D1D5DB" stroke-width="1.5" />
-                        <!-- 轴线 -->
-                        <line x1="210" y1="30" x2="210" y2="390" stroke="#D1D5DB" stroke-width="1" />
-                        <line x1="42" y1="126" x2="378" y2="294" stroke="#D1D5DB" stroke-width="1" />
-                        <line x1="42" y1="294" x2="378" y2="126" stroke="#D1D5DB" stroke-width="1" />
-                        <!-- 维度标签 -->
-                        <text x="210" y="14" text-anchor="middle" font-size="13" font-weight="500" fill="#1F2A44">运动控制</text>
-                        <text x="392" y="130" text-anchor="start" font-size="13" font-weight="500" fill="#1F2A44">路径规划</text>
-                        <text x="392" y="298" text-anchor="start" font-size="13" font-weight="500" fill="#1F2A44">避障验证</text>
-                        <text x="210" y="410" text-anchor="middle" font-size="13" font-weight="500" fill="#1F2A44">仿真精度</text>
-                        <text x="28" y="298" text-anchor="end" font-size="13" font-weight="500" fill="#1F2A44">架构完整性</text>
-                        <text x="28" y="130" text-anchor="end" font-size="13" font-weight="500" fill="#1F2A44">协议栈梳理</text>
-                        <!-- 数据多边形 (当前) -->
-                        <!-- 评分: 运动控制 3/5, 路径规划 2/5, 避障验证 1/5, 仿真精度 1/5, 架构完整性 2/5, 协议栈梳理 1/5 -->
-                        <!-- 映射: 每格20% => 半径 = 0.2 + 0.16*score -->
-                        <polygon points="
-                            210,78
-                            346,174
-                            320,300
-                            210,342
-                            100,300
-                            74,174
-                        " fill="#3370FF33" stroke="#3370FF" stroke-width="2" stroke-linejoin="round" />
-                        <!-- 数据点 -->
-                        <circle cx="210" cy="78" r="5" fill="#3370FF" />
-                        <circle cx="346" cy="174" r="5" fill="#3370FF" />
-                        <circle cx="320" cy="300" r="5" fill="#3370FF" />
-                        <circle cx="210" cy="342" r="5" fill="#3370FF" />
-                        <circle cx="100" cy="300" r="5" fill="#3370FF" />
-                        <circle cx="74" cy="174" r="5" fill="#3370FF" />
-                        <!-- 中心文字 -->
-                        <text x="210" y="210" text-anchor="middle" font-size="12" fill="#6B7280">当前成熟度</text>
-                        <text x="210" y="226" text-anchor="middle" font-size="22" font-weight="600" fill="#3370FF">1.7</text>
-                        <text x="210" y="242" text-anchor="middle" font-size="10" fill="#9CA3AF">/ 5.0</text>
-                        <!-- 小字说明 -->
-                        <text x="420" y="400" text-anchor="end" font-size="10" fill="#9CA3AF">基于源内容评估</text>
-                    </svg>
-                </div>
-                <div class="text-muted mt-8" style="text-align:center;">📌 运动控制 3/5 · 路径规划 2/5 · 避障验证 1/5 · 仿真精度 1/5 · 架构完整性 2/5 · 协议栈梳理 1/5</div>
-            </div>
-        </div>
+<section class="section" id="Demo_影响">
+  <h2>Demo 影响</h2>
+  <div class="section-body"><p>原文未明确。</p></div>
+</section>
 
-        <!-- ============ 任务负责人卡片 ============ -->
-        <div class="module" id="tasks">
-            <h2>📋 任务负责人卡片 <span class="badge">待办事项</span></h2>
-            <div class="grid-3col">
-                <div class="task-card">
-                    <div class="task-title">🎯 降低误差至 0.05mm</div>
-                    <div><span class="tag tag-orange">中优先级</span></div>
-                    <div class="task-meta">
-                        <span><strong>负责人</strong> 说话人4</span>
-                        <span><strong>截止</strong> <span class="src-missing">source not explicit</span></span>
-                        <span><strong>状态</strong> 进行中 · 当前 4mm</span>
-                    </div>
-                </div>
-                <div class="task-card">
-                    <div class="task-title">🖼️ 画架构图（Pro & Light）</div>
-                    <div><span class="tag tag-red">高优先级</span></div>
-                    <div class="task-meta">
-                        <span><strong>负责人</strong> 说话人2</span>
-                        <span><strong>截止</strong> <span class="src-missing">source not explicit</span></span>
-                        <span><strong>状态</strong> 待启动</span>
-                    </div>
-                </div>
-                <div class="task-card">
-                    <div class="task-title">🔗 梳理协议栈 & workflow</div>
-                    <div><span class="tag tag-red">高优先级</span></div>
-                    <div class="task-meta">
-                        <span><strong>负责人</strong> 说话人2、3</span>
-                        <span><strong>截止</strong> 2026-06-04（周五）</span>
-                        <span><strong>状态</strong> 进行中</span>
-                    </div>
-                </div>
-                <div class="task-card">
-                    <div class="task-title">🔍 分析仿真 vs 真实差异</div>
-                    <div><span class="tag tag-red">高优先级</span></div>
-                    <div class="task-meta">
-                        <span><strong>负责人</strong> 说话人2、3</span>
-                        <span><strong>截止</strong> <span class="src-missing">source not explicit</span></span>
-                        <span><strong>状态</strong> 待启动</span>
-                    </div>
-                </div>
-                <div class="task-card">
-                    <div class="task-title">📊 设计 Benchmark 用例</div>
-                    <div><span class="tag tag-red">高优先级</span></div>
-                    <div class="task-meta">
-                        <span><strong>负责人</strong> 说话人2、3</span>
-                        <span><strong>截止</strong> <span class="src-missing">source not explicit</span></span>
-                        <span><strong>状态</strong> 待启动</span>
-                    </div>
-                </div>
-                <div class="task-card" style="background:#FAFAFB;border-color:#E8E9ED;">
-                    <div class="task-title" style="color:#9CA3AF;">📌 已确认事项</div>
-                    <div class="task-meta" style="font-size:12px;color:#4B5563;">
-                        <div>✅ 仿真机械臂可移动，误差 4mm</div>
-                        <div>✅ 关节独立运动功能可用</div>
-                        <div>✅ 路径规划策略：固定先 Z 后 XY 再降 Z</div>
-                        <div>✅ 仿真从 Linux 底层开始，真实硬件有 BSP</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ============ 风险状态表 ============ -->
-        <div class="module" id="risks">
-            <h2>⚠️ 风险状态表 <span class="badge">未解决问题</span></h2>
-            <table class="risk-table">
-                <thead>
-                    <tr>
-                        <th style="width:6%;">#</th>
-                        <th style="width:44%;">风险描述</th>
-                        <th style="width:14%;">等级</th>
-                        <th style="width:18%;">影响领域</th>
-                        <th style="width:18%;">缓解状态</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>仿真误差 4mm 远大于 spec 0.05mm，可能无法反映真实情况</td>
-                        <td><span class="tag tag-red">高</span></td>
-                        <td>精度验证 · 算法有效性</td>
-                        <td><span class="tag tag-orange">缓解中</span></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>仿真环境无法真实反映内部处理流程（CPU 调度、数据拷贝），测试结果可能无效</td>
-                        <td><span class="tag tag-red">高</span></td>
-                        <td>性能评估 · 架构验证</td>
-                        <td><span class="tag tag-orange">缓解中</span></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>硬件环境调试时 AI 工具难以辅助</td>
-                        <td><span class="tag tag-orange">中</span></td>
-                        <td>调试效率 · 开发流程</td>
-                        <td><span class="tag tag-gray">待评估</span></td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="text-muted mt-8" style="text-align:right;">📌 风险来源：2026-05 会议确认 · 缓解措施待补充</div>
-        </div>
-
-        <!-- ============ 页脚 ============ -->
-        <div style="text-align:center;padding:16px 0 8px;font-size:13px;color:#9CA3AF;border-top:1px solid #E8E9ED;margin-top:8px;">
-            仿真机械臂 · 项目总览 · 数据截至 2026-05 会议 · 基于源内容构建
-        </div>
-    </div>
+<section class="section" id="最近变化">
+  <h2>最近变化</h2>
+  <div class="section-body"><ul>
+<li>&lt;span class=&quot;change-new&quot;&gt;新增：6月2日会议明确仿真环境测试策略：先画架构图，理解差异，再设计用例。&lt;/span&gt;</li>
+<li>&lt;span class=&quot;change-updated&quot;&gt;变化：仿真机械臂关节独立运动已完成（5月12日）。&lt;/span&gt;</li>
+<li>&lt;span class=&quot;change-new&quot;&gt;新增：Pro与Light的区别已明确，但架构层级细节待梳理。&lt;/span&gt;</li>
+</ul></div>
+</section>
+    <p class="footer">Markdown 源：meeting-knowledge/modules/仿真机械臂.md</p>
+  </div>
 </body>
 </html>

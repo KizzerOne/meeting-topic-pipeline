@@ -7,7 +7,8 @@ import {
 } from '../../src/lib/ontology.js';
 import { parseSummaryResponse, cleanGeneratedMarkdown } from '../../src/lib/text.js';
 import { sanitizeFileBaseName, uniqueFileBaseName } from '../../src/lib/paths.js';
-import { CANONICAL_SUMMARY_BASE } from '../../src/constants.js';
+import { CANONICAL_SUMMARY_BASE, TOPIC_MODULE_SECTIONS } from '../../src/constants.js';
+import { normalizeTopicModuleMarkdown } from '../../src/lib/topic-template.js';
 
 const sampleOntology = {
   promote_threshold: 0.9,
@@ -90,6 +91,15 @@ test('uniqueFileBaseName avoids collisions', () => {
 
 test('canonical summary base name is fixed', () => {
   assert.equal(CANONICAL_SUMMARY_BASE, 'summary');
+});
+
+test('normalizeTopicModuleMarkdown enforces all section headings', () => {
+  const raw = '# 机械臂控制\n\n## 模块目标\n\n控制真机。\n\n## 待办事项\n\n| 任务 | 负责人 | 截止时间 | 优先级 |\n| a | b | c | 高 |';
+  const normalized = normalizeTopicModuleMarkdown('机械臂控制', raw);
+  for (const section of TOPIC_MODULE_SECTIONS) {
+    assert.ok(normalized.includes(`## ${section.title}`), `missing ${section.title}`);
+  }
+  assert.ok(normalized.includes('控制真机'));
 });
 
 test('sanitizeFileBaseName removes illegal characters', () => {
